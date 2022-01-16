@@ -79,6 +79,9 @@ module.exports = alpha = async (alpha, m, chatUpdate) => {
 		 const from = mek.key.remoteJid
 		 const content = JSON.stringify(mek.message)
         const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('HH:mm:ss z')
+        const WaktuWib = moment.tz('Asia/Jakarta').format('DD/MM HH:mm:ss')
+        const WaktuWit = moment.tz('Asia/Makassar').format('DD/MM HH:mm:ss')
+        const WaktuWita = moment.tz('Asia/Jayapura').format('DD/MM HH:mm:ss')
         const salam = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('a')
         const command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase()
         const args = body.trim().split(/ +/).slice(1)
@@ -366,11 +369,88 @@ ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Obje
                 alpha.sendMessage(m.chat, { contacts: { displayName: 'Zeeone Ofc.', contacts: [{ vcard }] } }, { quoted: m })
             }
             break
+            case 'tff':
+              var tff = await getBuffer(flaming+'Isi Format Order')
+              var but = [
+                {
+                  "urlButton": {
+                    "displayText": "YouTube Owner",
+                    "url": `${youtube}`
+                  }
+                },
+                {
+                  "urlButton": {
+                    "displayText": "Website Owner",              
+                    "url": `${myweb}`
+      
+                  }
+                },
+                {
+                  "quickReplyButton": {
+                    "displayText": "TOPUP DM",
+      "id": 'topupdm'
+                  }
+                },
+                {
+                  "quickReplyButton": {
+                    "displayText": "OWNER",
+      "id": 'owner'
+                  }
+                },
+      {
+                  "quickReplyButton": {
+                    "displayText": "LIST MENU",
+      "id": 'command'
+                  }
+                }
+              ]
+              await alpha.send5ButLoc(from, lang.tff(prefix) , `© ${ownername}`,tff, but )
+            break
+
+            case 'tml':
+              var but = [
+                {
+                  "urlButton": {
+                    "displayText": "YouTube Owner",
+                    "url": `${youtube}`
+                  }
+                },
+                {
+                  "urlButton": {
+                    "displayText": "Website Owner",              
+                    "url": `${myweb}`
+      
+                  }
+                },
+                {
+                  "quickReplyButton": {
+                    "displayText": "𝑅𝑢𝑙𝑒𝑠",
+      "id": 'rules'
+                  }
+                },
+                {
+                  "quickReplyButton": {
+                    "displayText": "Owner",
+      "id": 'owner'
+                  }
+                },
+      {
+                  "quickReplyButton": {
+                    "displayText": "List Command",
+      "id": 'command'
+                  }
+                }
+              ]
+              await alpha.send5ButImg(from, lang.tos(ownernomer) , `© ${ownername}`,qris, but , { userJid: m.chat, quoted: m })
+           break
+
             case 'rules':
             reply(lang.rules(prefix))
             break
+
             case 'sc': case 'source':
             reply(lang.source())
+
             break
             case 'donasi': case 'donate':
             var but = [
@@ -709,6 +789,114 @@ break
                     reply(lang.wrongFormat())
                 }
             break   
+
+// T O P U P   K A T E G O R I
+            case 'topupdm':{
+              const topupdm = ['dmff','dmmla','dmmlb']
+                    alpha.sendList(from, 'Topup banh ?', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                            {
+                              "title": "Kategori Game-1",
+                              "rows": [
+                                {
+                                  "title": "List Diamond Free Fire",
+                                  "rowId": "dmff"
+                                }
+                              ]
+                            },
+                            {
+                              "title": "Kategori Game-2",
+                              "rows": [
+                                {
+                                  "title": "List Diamond Mobile Legends A",
+                                  "rowId": "dmmla"
+                                }
+                              ]
+                            },
+                            {
+                              "title": "Kategori Game-3",
+                              "rows": [
+                                {
+                                  "title": "List Diamond Mobile Legends B",
+                                  "rowId": "dmmlb"
+                                }
+                              ]
+                            }], {quoted:fgif})
+                          }
+                          break
+
+// L I S T  D I A M O N D  FF
+                          case 'dmff':{
+                                  alpha.sendList(from, 'Topup banh ?', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                                          {
+                                            "title": "Free Fire 1",
+                                            "rows": [
+                                              {
+                                                "title": "70💎 = IDR 9.500",
+                                                "rowId": "tff"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "title": "Free Fire 2",
+                                            "rows": [
+                                              {
+                                                "title": "100💎 = IDR 14.500",
+                                                "rowId": "tff"
+                                              }
+                                            ]
+                                          }], {quoted:fgif})
+                                }
+                                        break
+
+// L I S T  D I A M O N D  ML A
+                          case 'dmmla':{
+                                  alpha.sendList(from, 'Topup banh ?', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                                          {
+                                            "title": "Mobile Legends 1",
+                                            "rows": [
+                                              {
+                                                "title": "86💎 = IDR 19.500",
+                                                "rowId": "tff"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "title": "Mobile Legends 2",
+                                            "rows": [
+                                              {
+                                                "title": "172💎 = IDR 39.000",
+                                                "rowId": "tff"
+                                              }
+                                            ]
+                                          }], {quoted:fgif})
+                                }
+                                        break
+
+// L I S T  D I A M O N D  ML B
+                          case 'dmmlb':{
+                                  alpha.sendList(from, 'Topup banh ?', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                                          {
+                                            "title": "Mobile Legends 1",
+                                            "rows": [
+                                              {
+                                                "title": "39💎 = IDR 10.000",
+                                                "rowId": "tml"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "title": "Mobile Legends 2",
+                                            "rows": [
+                                              {
+                                                "title": "65💎 = IDR 15.000",
+                                                "rowId": "tml"
+                                              }
+                                            ]
+                                          }], {quoted:fgif})
+                                }
+                                        break
+     
+// S E T  M E N U - L O C
             case 'setmenu':{
             	if (!m.key.fromMe && !isCreator) return reply(lang.ownerOnly())
             const listhades = ['templateLocation', 'templateTenor']
@@ -731,6 +919,8 @@ break
 									}
 								]
 							}], {quoted:fgif})
+
+// S E T  M E N U  - T E N O R
                 if (!listhades.includes(text)) return alpha.sendList(from, 'Mau set menu bang ?', `© ${ownername}`, salam + pushname, 'KLIK DISINI', [
 							{
 								"title": "Set Menu-1",
@@ -754,7 +944,10 @@ break
 		 		   reply(lang.ok())
 		}
             break
+
+// M E N U - L O C
 case 'menu':{
+covid = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
 if(m.isGroup){
 	if(typemenu == 'templateLocation'){
 var but = [
@@ -773,25 +966,27 @@ var but = [
           },
           {
             "quickReplyButton": {
-              "displayText": "Donasi",
-"id": 'donate'
+              "displayText": "TOPUP DM",
+"id": 'topupdm'
             }
           },
           {
             "quickReplyButton": {
-              "displayText": "Owner",
+              "displayText": "OWNER",
 "id": 'owner'
             }
           },
 {
             "quickReplyButton": {
-              "displayText": "List Command",
+              "displayText": "LIST MENU",
 "id": 'command'
             }
           }
         ]
-        await alpha.send5ButLoc(from, lang.menunya(salam, pushname) , `© ${ownername}`,pp_bot, but )
+        await alpha.send5ButLoc(from, lang.menunya(salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname) , `© ${ownername}`,pp_bot, but )
         }
+
+// M E N U - T E N O R
         if(typemenu == 'templateTenor'){
          but = [
           {
@@ -826,7 +1021,7 @@ var but = [
             }
           }
         ]
-         alpha.send5ButGif(from, lang.menunya(salam, pushname) , `© ${ownername}` ,pp_bot, but , {quoted: m})
+         alpha.send5ButGif(from, lang.menunya(salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname) , `© ${ownername}` ,pp_bot, but , {quoted: m})
          }
         } else {
 var but = [
@@ -866,6 +1061,8 @@ var but = [
 }
 }
         break    
+
+// A L L  M E N U
 case 'allmenu':
 	var but = [
           {
@@ -902,6 +1099,8 @@ case 'allmenu':
         ]
         await alpha.send5ButLoc(from, `Hai kak ${pushname} 👋, saya *${botname}* ` + '\n\n' + lang.listMenu(time, salam, pushname, prefix) , `© ${ownername}`,pp_bot, but )
         break   
+
+// O W N E R  M E N U
 case 'ownercmd': case'ownermenu':
  var ownercmd = await getBuffer(flaming+'Owner Menu')
  var but = [
@@ -939,6 +1138,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.ownermenu(prefix) , `© ${ownername}`,ownercmd, but )
         break 
+
+// A N I M E  M E N U
     case 'animecmd': case 'animemenu':
  var animecmd = await getBuffer(flaming+'Anime Menu')
  var but = [
@@ -976,6 +1177,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.anime(prefix) , `© ${ownername}`,animecmd, but )
         break 
+
+// G R O U P  M E N U
             case 'groupcmd': case 'groupmenu':
  var groupcmd = await getBuffer(flaming+'Group Menu')
  var but = [
@@ -1013,6 +1216,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.group(prefix) , `© ${ownername}`,groupcmd, but )
         break 
+
+// S E A R C H  M E N U
         case 'searchcmd': case 'searchmenu':
  var searchcmd = await getBuffer(flaming+'Search Menu')
  var but = [
@@ -1050,6 +1255,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.search(prefix) , `© ${ownername}`,searchcmd, but )
         break 
+
+// C O N V E R T  M E N U
         case 'convertercmd': case 'convertmenu':
  var convertercmd = await getBuffer(flaming+'Convert Menu')
  var but = [
@@ -1087,6 +1294,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.converter(prefix) , `© ${ownername}`,convertercmd, but )
         break 
+
+// S T I C K E R  M E N U
         case 'stickercmd': case 'stickermenu':
  var stickercmd = await getBuffer(flaming+'Sticker Effect Menu')
  var but = [
@@ -1124,6 +1333,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.effect(prefix) , `© ${ownername}`,stickercmd, but )
         break 
+
+// D O W N L O A D  M E N U
         case 'downloadercmd': case 'downloadmenu':
  var downloadercmd = await getBuffer(flaming+'Download Menu')
  var but = [
@@ -1161,6 +1372,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.download(prefix) , `© ${ownername}`,downloadercmd, but )
         break 
+
+// R A N D O M  A N I M E  M E N U
         case 'ranimecmd': case 'animemenu':
  var ranimecmd = await getBuffer(flaming+'Random Anime')
  var but = [
@@ -1198,6 +1411,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.ranime(prefix) , `© ${ownername}`,ranimecmd, but )
         break 
+
+// O T H E R  M E N U
         case 'othercmd': case 'orhermenu':
  var othercmd = await getBuffer(flaming+'Others Menu')
  var but = [
@@ -1235,6 +1450,8 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.other(prefix) , `© ${ownername}`,othercmd, but )
         break 
+
+// T E X T  P R O  M E N U
         case 'textprocmd': case 'textpromenu':
  var textprocmd = await getBuffer(flaming+'Textpro Menu')
  var but = [
@@ -1272,7 +1489,9 @@ case 'ownercmd': case'ownermenu':
         ]
         await alpha.send5ButLoc(from, lang.textpro(prefix) , `© ${ownername}`,textprocmd, but )
         break 
-        
+
+
+// T H A N K S  T O
         case 'thanksto': case 'tqto':{
  var thanksto = await getBuffer(flaming+'Contributors')
  var but = [
