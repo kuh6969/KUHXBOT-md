@@ -1,3 +1,7 @@
+exports.tff = (prefix) => {
+	return`Kirim *${prefix}tff userID_nominal DM*\nContoh : ${prefix}tff 403559022_70`
+	}
+
 exports.private = () =>{
 	return`Fitur hanya bisa di gunakan di private chat`
 	}
@@ -85,17 +89,29 @@ exports.videoLimit = () => {
 exports.notNum = (q) => {
     return `"${q}", bukan angka!`
 }
-exports.menunya = (salam, pushname) =>{
-	return`Hai kak ${pushname} 👋 selamat ${salam} , 
-saya Alphabot-Md, bot ini adalah Beta Multi-Device Whatsapp. 
-Jika kamu menemukan semacam bug atau kesalahan mohon dimaklumi dulu ya, 
-lapor owner agar segera di perbaiki 🙏      
+exports.menunya = (salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname) =>{
+	return`Hai kak ${pushname} 👋 selamat ${salam} ,
+bot ini adalah Beta Multi-Device Whatsapp. Jika kamu menemukan semacam bug atau kesalahan mohon dimaklumi dulu ya, lapor owner agar segera di perbaiki 🙏 
+
+
+『 *INDO TIME* 』
+〆 ${WaktuWib} WIB
+〆 ${WaktuWita} WITA
+〆 ${WaktuWit} WIT
+
+『 *COVID INDO* 』
+〆 Positif : ${covid.positif}
+〆 Sembuh : ${covid.sembuh}
+〆 Meninggal : ${covid.meninggal}
+〆 Dirawat : ${covid.dirawat}
+
 `
 }
 exports.listMenu = (time, salam, pushname, prefix) => {
-    return `*Selamat ${salam} ${pushname} 😖*
-*⌚Time Server : ${time}*
-*📚 List-Menu Alphabot-Md :*
+    return `Selamat ${salam} ${pushname} 😖
+⌚Time Server : ${time}
+📚 List-Menu Alphabot-Md :
+
 
 ╭─❒ 「 Bot Info 」 
 ├ ${prefix}owner
@@ -602,7 +618,7 @@ exports.welcome = () =>{
 ╰ 𝖯𝖺𝗍𝗎𝗁𝗂 𝗋𝗎𝗅𝖾𝗌 𝗀𝗋𝗎𝗉 𝗒𝖺 𝗄𝖺k ~`
 }
 exports.leave = () =>{
-	return`Yah kok out 😣 Mental aman kan kak >.<
+	return`Yah kok out 😣 Mental aman ? >.<
 Goodbye`
 }
 exports.source = () =>{
