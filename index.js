@@ -28,6 +28,7 @@ const cheerio = require('cheerio')
 const { fromBuffer } = require('file-type')
 const path = require('path')
 const os = require('os')
+const crypto = require('crypto')
 const fetch = require('node-fetch')
 const ffmpeg = require('fluent-ffmpeg')
 const speed = require('performance-now')
@@ -153,6 +154,10 @@ module.exports = alpha = async (alpha, m, chatUpdate) => {
 			alpha.groupParticipantsUpdate(m.chat, [sender], 'remove')
 		}
 	}
+
+  const createSerial = (size) => {
+    return crypto.randomBytes(size).toString('hex').slice(0, size)
+    }
         
         // Public & Self
         if (!alpha.public) {
@@ -366,84 +371,9 @@ ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Obje
                     + `ORG:Owner ${botname};\n` // the organization of the contact
                     + `TEL;type=CELL;type=VOICE;waid=${ownernomer}:${ownernomerr}\n`
                     + 'END:VCARD'
-                alpha.sendMessage(m.chat, { contacts: { displayName: 'Zeeone Ofc.', contacts: [{ vcard }] } }, { quoted: m })
+                alpha.sendMessage(m.chat, { contacts: { displayName: 'Kuh.', contacts: [{ vcard }] } }, { quoted: m })
             }
             break
-            case 'tff':
-              var tff = await getBuffer(flaming+'Isi Format Order')
-              var but = [
-                {
-                  "urlButton": {
-                    "displayText": "YouTube Owner",
-                    "url": `${youtube}`
-                  }
-                },
-                {
-                  "urlButton": {
-                    "displayText": "Website Owner",              
-                    "url": `${myweb}`
-      
-                  }
-                },
-                {
-                  "quickReplyButton": {
-                    "displayText": "TOPUP DM",
-      "id": 'topupdm'
-                  }
-                },
-                {
-                  "quickReplyButton": {
-                    "displayText": "OWNER",
-      "id": 'owner'
-                  }
-                },
-      {
-                  "quickReplyButton": {
-                    "displayText": "LIST MENU",
-      "id": 'command'
-                  }
-                }
-              ]
-              await alpha.send5ButLoc(from, lang.tff(prefix) , `© ${ownername}`,tff, but )
-            break
-
-            case 'tml':
-              var but = [
-                {
-                  "urlButton": {
-                    "displayText": "YouTube Owner",
-                    "url": `${youtube}`
-                  }
-                },
-                {
-                  "urlButton": {
-                    "displayText": "Website Owner",              
-                    "url": `${myweb}`
-      
-                  }
-                },
-                {
-                  "quickReplyButton": {
-                    "displayText": "𝑅𝑢𝑙𝑒𝑠",
-      "id": 'rules'
-                  }
-                },
-                {
-                  "quickReplyButton": {
-                    "displayText": "Owner",
-      "id": 'owner'
-                  }
-                },
-      {
-                  "quickReplyButton": {
-                    "displayText": "List Command",
-      "id": 'command'
-                  }
-                }
-              ]
-              await alpha.send5ButImg(from, lang.tos(ownernomer) , `© ${ownername}`,qris, but , { userJid: m.chat, quoted: m })
-           break
-
             case 'rules':
             reply(lang.rules(prefix))
             break
@@ -792,8 +722,7 @@ break
 
 // T O P U P   K A T E G O R I
             case 'topupdm':{
-              const topupdm = ['dmff','dmmla','dmmlb']
-                    alpha.sendList(from, 'Topup banh ?', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                    alpha.sendList(from, 'Pilih Kategori Game', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
                             {
                               "title": "Kategori Game-1",
                               "rows": [
@@ -807,7 +736,7 @@ break
                               "title": "Kategori Game-2",
                               "rows": [
                                 {
-                                  "title": "List Diamond Mobile Legends A",
+                                  "title": "List Diamond Mobile Legends Paket A",
                                   "rowId": "dmmla"
                                 }
                               ]
@@ -816,7 +745,7 @@ break
                               "title": "Kategori Game-3",
                               "rows": [
                                 {
-                                  "title": "List Diamond Mobile Legends B",
+                                  "title": "List Diamond Mobile Legends Paket B",
                                   "rowId": "dmmlb"
                                 }
                               ]
@@ -826,7 +755,7 @@ break
 
 // L I S T  D I A M O N D  FF
                           case 'dmff':{
-                                  alpha.sendList(from, 'Topup banh ?', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                                  alpha.sendList(from, 'Pilih Nominal Diamond', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
                                           {
                                             "title": "Free Fire 1",
                                             "rows": [
@@ -850,13 +779,13 @@ break
 
 // L I S T  D I A M O N D  ML A
                           case 'dmmla':{
-                                  alpha.sendList(from, 'Topup banh ?', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                                  alpha.sendList(from, 'Pilih Nominal Diamond', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
                                           {
                                             "title": "Mobile Legends 1",
                                             "rows": [
                                               {
                                                 "title": "86💎 = IDR 19.500",
-                                                "rowId": "tff"
+                                                "rowId": "tml"
                                               }
                                             ]
                                           },
@@ -865,7 +794,7 @@ break
                                             "rows": [
                                               {
                                                 "title": "172💎 = IDR 39.000",
-                                                "rowId": "tff"
+                                                "rowId": "tml"
                                               }
                                             ]
                                           }], {quoted:fgif})
@@ -874,7 +803,7 @@ break
 
 // L I S T  D I A M O N D  ML B
                           case 'dmmlb':{
-                                  alpha.sendList(from, 'Topup banh ?', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                                  alpha.sendList(from, 'Pilih Nominal Diamond', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
                                           {
                                             "title": "Mobile Legends 1",
                                             "rows": [
@@ -895,8 +824,125 @@ break
                                           }], {quoted:fgif})
                                 }
                                         break
+// F O R M A T  O R D E R  T O P U P
+                            
+                                    case 'tff':
+               const serialFF = createSerial(16)
+               if (!q) return reply(`Ketik : *${prefix}tff userID_nominal*\nContoh : *${prefix}tff 403559022_70*`)
+               arg = args.join(' ')
+               ff_id = arg.split('_')[0]
+              order = arg.split('_')[1]
+get_result = await fetchJson(`https://api.lolhuman.xyz/api/freefire/${ff_id}?apikey=${setting.lolkey}`)
+nick = get_result.result
+id = ff_id
+order = order
+resultNYA =`${salam} ${pushname} 
+                                   
+〆 UID : ${id}
+〆 Nickname : ${nick}
+〆 Order : ${order} Diamond
+〆 Status : Gagal
+〆 Waktu : ${WaktuWib} WIB
+〆 No Referensi : ${serialFF}
+〆 WhatsApp : `
+                                            var tff = await getBuffer(flaming+'STATUS ORDER')
+                                            var but = [
+                                              {
+                                                "urlButton": {
+                                                  "displayText": "YouTube Owner",
+                                                  "url": `${youtube}`
+                                                }
+                                              },
+                                              {
+                                                "urlButton": {
+                                                  "displayText": "Website Owner",              
+                                                  "url": `${myweb}`
+                                    
+                                                }
+                                              },
+                                              {
+                                                "quickReplyButton": {
+                                                  "displayText": "TOPUP DM",
+                                    "id": 'topupdm'
+                                                }
+                                              },
+                                              {
+                                                "quickReplyButton": {
+                                                  "displayText": "OWNER",
+                                    "id": 'owner'
+                                                }
+                                              },
+                                    {
+                                                "quickReplyButton": {
+                                                  "displayText": "BACK TO MENU",
+                                    "id": 'command'
+                                                }
+                                              }
+                                            ]
+                                            await alpha.send5ButLoc(from, resultNYA , `Apabila Nickname Tertulis Undefined Padahal ID Sudah Benar Berarti Database Bot Sedang Error`,tff, but )
+                                          break
+
+                                          case 'tml':
+                                            const serialML = createSerial(16)
+                                            if (!q) return reply(`Ketik *${prefix}tml userID_Server_nominal*\nContoh : *${prefix}tml 12345678_1234_86*`)
+                                            arg = args.join(' ')
+                                            ml_id = arg.split('_')[0]
+                                            ml_server = arg.split('_')[1]
+                                           order = arg.split('_')[2]
+                             get_result = await fetchJson(`https://api.lolhuman.xyz/api/mobilelegend/${ml_id}/${ml_server}?apikey=${setting.lolkey2}`)
+                             nick = get_result.result
+                             id = ml_id
+                             server = ml_server
+                             order = order
+                             resultNYA =`${salam} ${pushname} 
+                                                                
+〆 UID : ${id}
+〆 Server : ${server}
+〆 Nickname : ${nick}
+〆 Order : ${order} Diamond
+〆 Status : Gagal
+〆 Waktu : ${WaktuWib} WIB
+〆 No Referensi : ${serialML}
+〆 WhatsApp : `
+alpha.sendMessage('628176878884@s.whatsapp.net',`*ORDER:* ${resultNYA}`, text)
+                                      var tml = await getBuffer(flaming+'STATUS ORDER')
+                                      var but = [
+                                                                           {
+                                                                             "urlButton": {
+                                                                               "displayText": "YouTube Owner",
+                                                                               "url": `${youtube}`
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "urlButton": {
+                                                                               "displayText": "Website Owner",              
+                                                                               "url": `${myweb}`
+                                                                 
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "TOPUP DM",
+                                                                 "id": 'topupdm'
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "OWNER",
+                                                                 "id": 'owner'
+                                                                             }
+                                                                           },
+                                                                 {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "BACK TO MENU",
+                                                                 "id": 'command'
+                                                                             }
+                                                                           }
+                                                                         ]
+                                                                         await alpha.send5ButLoc(from, resultNYA , `Apabila Nickname Tertulis Undefined Padahal ID Sudah Benar Berarti Database Bot Sedang Error`,tml, but )
+                                                                       break
      
-// S E T  M E N U - L O C
+// S E T  M E N U - L O nbC
             case 'setmenu':{
             	if (!m.key.fromMe && !isCreator) return reply(lang.ownerOnly())
             const listhades = ['templateLocation', 'templateTenor']
