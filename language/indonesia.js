@@ -1,7 +1,3 @@
-exports.tff = (prefix) => {
-	return`Kirim *${prefix}tff userID_nominal DM*\nContoh : ${prefix}tff 403559022_70`
-	}
-
 exports.private = () =>{
 	return`Fitur hanya bisa di gunakan di private chat`
 	}
@@ -89,8 +85,8 @@ exports.videoLimit = () => {
 exports.notNum = (q) => {
     return `"${q}", bukan angka!`
 }
-exports.menunya = (salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname) =>{
-	return`Hai kak ${pushname} 👋 selamat ${salam} ,
+exports.menunya = (salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname, itsMe) =>{
+	return`Hai kak ${itsMe} 👋 selamat ${salam} ,
 bot ini adalah Beta Multi-Device Whatsapp. Jika kamu menemukan semacam bug atau kesalahan mohon dimaklumi dulu ya, lapor owner agar segera di perbaiki 🙏 
 
 
