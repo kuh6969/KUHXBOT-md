@@ -85,8 +85,8 @@ exports.videoLimit = () => {
 exports.notNum = (q) => {
     return `"${q}", bukan angka!`
 }
-exports.menunya = (salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname, itsMe) =>{
-	return`Hai kak ${itsMe} 👋 selamat ${salam} ,
+exports.menunya = (salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname) =>{
+	return`Hai kak ${pushname} 👋 selamat ${salam} ,
 bot ini adalah Beta Multi-Device Whatsapp. Jika kamu menemukan semacam bug atau kesalahan mohon dimaklumi dulu ya, lapor owner agar segera di perbaiki 🙏 
 
 
