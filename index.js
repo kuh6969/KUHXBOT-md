@@ -994,7 +994,7 @@ alpha.sendMessage('628176878884@s.whatsapp.net',`*ORDER:* ${resultNYA}`, text)
 // M E N U - L O C
 case 'menu':{
 covid = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
-if(m.isGroup){
+
 	if(typemenu == 'templateLocation'){
 var but = [
           {
@@ -1030,7 +1030,7 @@ var but = [
           }
         ]
         await alpha.send5ButLoc(from, lang.menunya(salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname) , `© ${ownername}`,pp_bot, but )
-        }
+        
 
 // M E N U - T E N O R
         if(typemenu == 'templateTenor'){
@@ -1177,7 +1177,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1216,7 +1216,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1255,7 +1255,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1294,7 +1294,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1333,7 +1333,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1372,7 +1372,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1411,7 +1411,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1450,7 +1450,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1489,7 +1489,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1528,7 +1528,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1568,7 +1568,7 @@ case 'ownercmd': case'ownermenu':
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
@@ -1606,7 +1606,7 @@ case 'nsfwcmd': case 'nsfwcommand':{
           },
 {
             "quickReplyButton": {
-              "displayText": "𝐵𝑎𝑐𝑘 𝑇𝑜 𝐿𝑖𝑠𝑡",
+              "displayText": "BACK TO LIST",
 "id": 'command'
             }
           }
