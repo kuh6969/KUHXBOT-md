@@ -1066,7 +1066,7 @@ resultNYA =`${salam} ${pushname}
 
 
                                           case 'formatpo':
-                                            const serialML = createSerial(16)
+                                            const serialPO = createSerial(16)
                                             if (!q) return reply(`Ketik *${prefix}formatpo ID_Server_nominal*\nContoh : *${prefix}formatpo 12345678_1234_266\n\nUntuk Format Nominal Diisi -> 266, 305, 400, 534, 1342*`)
                                             arg = args.join(' ')
                                             ml_id = arg.split('_')[0]
@@ -1085,7 +1085,7 @@ resultNYA =`${salam} ${pushname}
 〆 Order : ${order} Diamond
 〆 Status : Bayar Dulu Anj, Klik *OWNER*
 〆 Waktu : ${WaktuWib} WIB
-〆 No Referensi : ${serialML}`
+〆 No Referensi : ${serialPO}`
                                       var poml = await getBuffer(flaming+'STATUS ORDER')
                                       var but = [
                                                                            {
@@ -1125,7 +1125,7 @@ resultNYA =`${salam} ${pushname}
 
 
                                           case 'formatposl':
-                                            const serialML = createSerial(16)
+                                            const serialSL = createSerial(16)
                                             if (!q) return reply(`Ketik *${prefix}formatpo ID_Server_nominal*\nContoh : *${prefix}formatpo 12345678_1234_SL\n\nUntuk Format Nominal Diisi -> SL*`)
                                             arg = args.join(' ')
                                             ml_id = arg.split('_')[0]
@@ -1144,7 +1144,7 @@ resultNYA =`${salam} ${pushname}
 〆 Order : ${order} 
 〆 Status : Bayar Dulu Anj, Klik *OWNER*
 〆 Waktu : ${WaktuWib} WIB
-〆 No Referensi : ${serialML}`
+〆 No Referensi : ${serialSL}`
                                       var posl = await getBuffer(flaming+'STATUS ORDER')
                                       var but = [
                                                                            {
