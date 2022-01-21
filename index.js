@@ -804,6 +804,15 @@ break
                                   "rowId": "dmmlb"
                                 }
                               ]
+                            },
+                            {
+                              "title": "Kategori Game-4",
+                              "rows": [
+                                {
+                                  "title": "List Diamond Mobile Legends ( PRE ORDER )",
+                                  "rowId": "poml"
+                                }
+                              ]
                             }], {quoted:fgif})
                           }
                           break
@@ -815,7 +824,7 @@ break
                                             "title": "Free Fire 1",
                                             "rows": [
                                               {
-                                                "title": "70💎 = IDR 9.500",
+                                                "title": "140💎 = IDR 18.500",
                                                 "rowId": "tff"
                                               }
                                             ]
@@ -824,7 +833,7 @@ break
                                             "title": "Free Fire 2",
                                             "rows": [
                                               {
-                                                "title": "100💎 = IDR 14.500",
+                                                "title": "355💎 = IDR 47.000",
                                                 "rowId": "tff"
                                               }
                                             ]
@@ -863,7 +872,7 @@ break
                                             "title": "Mobile Legends 1",
                                             "rows": [
                                               {
-                                                "title": "39💎 = IDR 10.000",
+                                                "title": "92💎 = IDR 20.000",
                                                 "rowId": "tml"
                                               }
                                             ]
@@ -872,7 +881,7 @@ break
                                             "title": "Mobile Legends 2",
                                             "rows": [
                                               {
-                                                "title": "65💎 = IDR 15.000",
+                                                "title": "133💎 = IDR 30.000",
                                                 "rowId": "tml"
                                               }
                                             ]
@@ -955,11 +964,9 @@ resultNYA =`${salam} ${pushname}
 〆 Server : ${server}
 〆 Nickname : ${nick}
 〆 Order : ${order} Diamond
-〆 Status : Gagal
+〆 Status : Bayar Dulu Anj
 〆 Waktu : ${WaktuWib} WIB
-〆 No Referensi : ${serialML}
-〆 WhatsApp : `
-alpha.sendMessage('628176878884@s.whatsapp.net',`*ORDER:* ${resultNYA}`, text)
+〆 No Referensi : ${serialML}`
                                       var tml = await getBuffer(flaming+'STATUS ORDER')
                                       var but = [
                                                                            {
@@ -995,6 +1002,184 @@ alpha.sendMessage('628176878884@s.whatsapp.net',`*ORDER:* ${resultNYA}`, text)
                                                                            }
                                                                          ]
                                                                          await alpha.send5ButLoc(from, resultNYA , `Apabila Nickname Tertulis Undefined Padahal ID Sudah Benar Berarti Database Bot Sedang Error`,tml, but )
+                                                                       break
+
+// P R E   O R D E R
+            case 'poml':{
+                    alpha.sendList(from, 'Pilih Nominal Pre Order!', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                            {
+                              "title": "Pre Order-1",
+                              "rows": [
+                                {
+                                  "title": "266💎 (240+26) = IDR 58.000",
+                                  "rowId": "formatpo"
+                                }
+                              ]
+                            },
+                            {
+                              "title": "Pre Order-2",
+                              "rows": [
+                                {
+                                  "title": "305💎 (274+31) = IDR 67.000",
+                                  "rowId": "formatpo"
+                                }
+                              ]
+                            },
+                            {
+                              "title": "Pre Order-3",
+                              "rows": [
+                                {
+                                  "title": "400💎 (360+40) = IDR 89.000",
+                                  "rowId": "formatpo"
+                                }
+                              ]
+                            },
+                            {
+                              "title": "Pre Order-4",
+                              "rows": [
+                                {
+                                  "title": "534💎 (480+53) = IDR 117.000",
+                                  "rowId": "formatpo"
+                                }
+                              ]
+                            },
+                            {
+                              "title": "Pre Order-5",
+                              "rows": [
+                                {
+                                  "title": "1342💎 (1200+142) = IDR 285.000",
+                                  "rowId": "formatpo"
+                                }
+                              ]
+                            },
+                            {
+                              "title": "Pre Order-6",
+                              "rows": [
+                                {
+                                  "title": "PO Starlight Februari = 100.000",
+                                  "rowId": "formatposl"
+                                }
+                              ]
+                            }], {quoted:fgif})
+                          }
+                          break
+
+
+                                          case 'formatpo':
+                                            const serialML = createSerial(16)
+                                            if (!q) return reply(`Ketik *${prefix}formatpo ID_Server_nominal*\nContoh : *${prefix}formatpo 12345678_1234_266\n\nUntuk Format Nominal Diisi -> 266, 305, 400, 534, 1342*`)
+                                            arg = args.join(' ')
+                                            ml_id = arg.split('_')[0]
+                                            ml_server = arg.split('_')[1]
+                                           order = arg.split('_')[2]
+                             get_result = await fetchJson(`https://api.lolhuman.xyz/api/mobilelegend/${ml_id}/${ml_server}?apikey=${setting.lolkey2}`)
+                             nick = get_result.result
+                             id = ml_id
+                             server = ml_server
+                             order = order
+                             resultNYA =`${salam} ${pushname} 
+                                                                
+〆 UID : ${id}
+〆 Server : ${server}
+〆 Nickname : ${nick}
+〆 Order : ${order} Diamond
+〆 Status : Bayar Dulu Anj, Klik *OWNER*
+〆 Waktu : ${WaktuWib} WIB
+〆 No Referensi : ${serialML}`
+                                      var poml = await getBuffer(flaming+'STATUS ORDER')
+                                      var but = [
+                                                                           {
+                                                                             "urlButton": {
+                                                                               "displayText": "YouTube Owner",
+                                                                               "url": `${youtube}`
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "urlButton": {
+                                                                               "displayText": "Website Owner",              
+                                                                               "url": `${myweb}`
+                                                                 
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "TOPUP DM",
+                                                                 "id": 'topupdm'
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "OWNER",
+                                                                 "id": 'owner'
+                                                                             }
+                                                                           },
+                                                                 {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "BACK TO MENU",
+                                                                 "id": 'command2'
+                                                                             }
+                                                                           }
+                                                                         ]
+                                                                         await alpha.send5ButLoc(from, resultNYA , `Apabila Nickname Tertulis Undefined Padahal ID Sudah Benar Berarti Database Bot Sedang Error`,poml, but )
+                                                                       break
+
+
+                                          case 'formatposl':
+                                            const serialML = createSerial(16)
+                                            if (!q) return reply(`Ketik *${prefix}formatpo ID_Server_nominal*\nContoh : *${prefix}formatpo 12345678_1234_SL\n\nUntuk Format Nominal Diisi -> SL*`)
+                                            arg = args.join(' ')
+                                            ml_id = arg.split('_')[0]
+                                            ml_server = arg.split('_')[1]
+                                           order = arg.split('_')[2]
+                             get_result = await fetchJson(`https://api.lolhuman.xyz/api/mobilelegend/${ml_id}/${ml_server}?apikey=${setting.lolkey1}`)
+                             nick = get_result.result
+                             id = ml_id
+                             server = ml_server
+                             order = order
+                             resultNYA =`${salam} ${pushname} 
+                                                                
+〆 UID : ${id}
+〆 Server : ${server}
+〆 Nickname : ${nick}
+〆 Order : ${order} 
+〆 Status : Bayar Dulu Anj, Klik *OWNER*
+〆 Waktu : ${WaktuWib} WIB
+〆 No Referensi : ${serialML}`
+                                      var posl = await getBuffer(flaming+'STATUS ORDER')
+                                      var but = [
+                                                                           {
+                                                                             "urlButton": {
+                                                                               "displayText": "YouTube Owner",
+                                                                               "url": `${youtube}`
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "urlButton": {
+                                                                               "displayText": "Website Owner",              
+                                                                               "url": `${myweb}`
+                                                                 
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "TOPUP DM",
+                                                                 "id": 'topupdm'
+                                                                             }
+                                                                           },
+                                                                           {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "OWNER",
+                                                                 "id": 'owner'
+                                                                             }
+                                                                           },
+                                                                 {
+                                                                             "quickReplyButton": {
+                                                                               "displayText": "BACK TO MENU",
+                                                                 "id": 'command2'
+                                                                             }
+                                                                           }
+                                                                         ]
+                                                                         await alpha.send5ButLoc(from, resultNYA , `Apabila Nickname Tertulis Undefined Padahal ID Sudah Benar Berarti Database Bot Sedang Error`,posl, but )
                                                                        break
      
 // S E T  M E N U - L O nbC
