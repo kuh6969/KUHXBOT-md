@@ -85,7 +85,7 @@ exports.videoLimit = () => {
 exports.notNum = (q) => {
     return `"${q}", bukan angka!`
 }
-exports.menunya = (salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname) =>{
+exports.menunya = (salam, covid, vaksin, covidworld_positif, covidworld_meninggal, WaktuWib, WaktuWita, WaktuWit, pushname) =>{
 	return`Hai kak ${pushname} 👋 selamat ${salam} ,
 bot ini adalah Beta Multi-Device Whatsapp. Jika kamu menemukan semacam bug atau kesalahan mohon dimaklumi dulu ya, lapor owner agar segera di perbaiki 🙏 
 
@@ -101,12 +101,22 @@ bot ini adalah Beta Multi-Device Whatsapp. Jika kamu menemukan semacam bug atau 
 〆 Meninggal : ${covid.meninggal}
 〆 Dirawat : ${covid.dirawat}
 
+『 *VAKSIN INDO* 』
+〆 Target : ${vaksin.totalsasaran}
+〆 Vaksin 1 : ${vaksin.vaksinasi1}
+〆 Vaksin 2 : ${vaksin.vaksinasi2}
+
+『 *COVID WORLD* 』
+〆 Positif : ${covidworld_positif.value}
+〆 Sembuh : No Data
+〆 Meninggal : ${covidworld_meninggal.value}
+
 `
 }
 exports.listMenu = (time, salam, pushname, prefix) => {
     return `Selamat ${salam} ${pushname} 😖
 ⌚Time Server : ${time}
-📚 List-Menu Alphabot-Md :
+📚 List-Menu :
 
 
 ╭─❒ 「 Bot Info 」 
@@ -605,13 +615,8 @@ Arigatou Gozaimasu! Untuk kalian user ramah dan Beberapa orang yg ikut membantu 
 `
 }
 exports.welcome = () =>{
-	return`𝖩𝖺𝗇𝗀𝖺𝗇 𝗅𝗎𝗉𝖺 𝗂𝗇𝗍𝗋𝗈 𝗄𝖺𝗄 🤗
-	
-📛 𝖭𝖺𝗆𝖺 :
-🔞 𝖴𝗆𝗎𝗋 :
-🧑 𝖦𝖾𝗇𝖽𝖾𝗋 :
-🏙️ 𝖠𝗌𝗄𝗈𝗍 :
-╰ 𝖯𝖺𝗍𝗎𝗁𝗂 𝗋𝗎𝗅𝖾𝗌 𝗀𝗋𝗎𝗉 𝗒𝖺 𝗄𝖺k ~`
+	return`Saya Bot Yang Akan Membantu Anda Dalam Membuat Sticker, Download Lagu/Video, Dll.\n\nUntuk Memulai Chat Ketik *#menu*
+╰ Jangan Lupa Patuhi Rules Grub Ya Kak ~`
 }
 exports.leave = () =>{
 	return`Yah kok out 😣 Mental aman ? >.<
