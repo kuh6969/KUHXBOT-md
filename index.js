@@ -30,6 +30,8 @@ const path = require('path')
 const os = require('os')
 const crypto = require('crypto')
 const fetch = require('node-fetch')
+const { herolist } = require('./lib/herolist.js')
+const { herodetails } = require('./lib/herodetail.js')
 const ffmpeg = require('fluent-ffmpeg')
 const speed = require('performance-now')
 const moment = require("moment-timezone");
@@ -81,8 +83,8 @@ module.exports = alpha = async (alpha, m, chatUpdate) => {
 		 const content = JSON.stringify(mek.message)
         const time = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('HH:mm:ss z')
         const WaktuWib = moment.tz('Asia/Jakarta').format('DD/MM HH:mm:ss')
-        const WaktuWit = moment.tz('Asia/Makassar').format('DD/MM HH:mm:ss')
-        const WaktuWita = moment.tz('Asia/Jayapura').format('DD/MM HH:mm:ss')
+        const WaktuWita = moment.tz('Asia/Makassar').format('DD/MM HH:mm:ss')
+        const WaktuWit = moment.tz('Asia/Jayapura').format('DD/MM HH:mm:ss')
         const salam = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('a')
         const command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase()
         const args = body.trim().split(/ +/).slice(1)
@@ -412,7 +414,7 @@ ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Obje
 {
             "quickReplyButton": {
               "displayText": "List Command",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -507,14 +509,13 @@ break
             break
             case 'anime':
                 if (!q) return reply(lang.wrongFormat(prefix))
-                await reply(lang.wait())
-                zee.Anime(q).then(async data => {
+                xfar.Anime(q).then(async data => {
+                  for (let i of data) {
                     let txt = `*-------「 ANIME-SEARCH 」-------*\n\n`
-                    for (let i of data) {
-                        txt += `*📫 Title :* ${i.judul}\n`
-                        txt += `*📚 Url :* ${i.link}\n-----------------------------------------------------\n`
-                    }
-                    await sendFileFromUrl(from,data[0].thumbnail,txt,m)
+                        txt += `*〆 Title :* ${result.judul}\n`
+                        txt += `*〆 Url :* ${result.link}\n-----------------------------------------------------\n`
+                      }
+                        await sendFileFromUrl(from,data[0].thumbnail,txt,m)
                 })
                 .catch((err) => {
                     reply(lang.err())
@@ -522,8 +523,7 @@ break
             break
             case 'character': case 'karakter':
                 if (!q) return reply(lang.wrongFormat(prefix))
-                await reply(lang.wait())
-                zee.Character(q).then(async data => {
+                xfar.Character(q).then(async data => {
                     let txt = `*---「 CHARACTER-SEARCH 」---*\n\n`
                     for (let i of data) {
                         txt += `*📫 Character :* ${i.character}\n`
@@ -602,6 +602,61 @@ break
                     reply(lang.err())
                 })
             break
+            case 'jadwalsholat': case 'sholat':
+              if (!q) return reply(lang.wrongFormat(prefix))
+              xfar.JadwalSholat().then(async data => {
+                  let txt = `*---「 JADWAL SHOLAT 」---*\n\n`
+                    txt += `*〆 Imsyak :* ${data.imsyak}\n`
+                    txt += `*〆 Subuh :* ${data.subuh}\n`
+                    txt += `*〆 Dzuhur :* ${data.dzuhur}\n`
+                    txt += `*〆 Ashar :* ${data.ashar}\n`
+                    txt += `*〆 Maghrib :* ${data.maghrib}\n`
+                    txt += `*〆 Isya :* ${data.isya}\n\n`
+                    txt += `*〆 Tanggal :* ${data.tanggal}`
+                  reply(txt)
+              })
+              .catch((err) => {
+                  reply(lang.err())
+              })
+          break
+            case 'herolist':
+       await herolist().then((ress) => {
+       let listt = `*List hero untuk feature ${prefix}herodetail*\n\n`
+       for (var i = 0; i < ress.hero.length; i++) {
+       listt += '-  ' + ress.hero[i] + '\n'
+       }
+       reply(listt)
+       })
+       break
+       case 'herodetail':
+res = await fetchJson(body.slice(12))
+her = `*Hero Details ${body.slice(12)}*
+              
+*Nama* : ${res.hero_name}
+*Role* : ${res.role}
+*Quotes* : ${res.entrance_quotes}
+*Fitur Hero* : ${res.hero_feature}
+*Spesial* : ${res.speciality}
+*Rekomendasi Lane* : ${res.laning_recommendation}
+*Harga* : ${res.price.battle_point} [Battle point] | ${res.price.diamond} [DM] | ${res.price.hero_fragment} [Fragment]
+*Rilis* : ${res.release_date}
+              
+*Durability* : ${res.skill.durability}
+*Offence* : ${res.skill.offense}
+*Skill Effect* : ${res.skill_effects}
+*Difficulty* : ${res.skill.difficulty}
+               
+*Movement Speed* : ${res.attributes.movement_speed}
+*Physical Attack* : ${res.attributes.physical_attack}
+*Magic Defense* : ${res.attributes.magic_defense}
+*Ability Crit Rate* : ${res.attributes.ability_crit_rate}
+*HP* : ${res.attributes.hp}
+*Mana* : ${res.attributes.mana}
+*Mana Regen* : ${res.attributes.mana_regen}
+              
+*Story* : ${res.background_story}`
+reply(her)
+break
             case 'smeme': case 'stickermeme': case 'stickmeme': {
 if (!text) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
 if (text.includes('|')) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
@@ -875,7 +930,7 @@ resultNYA =`${salam} ${pushname}
                                     {
                                                 "quickReplyButton": {
                                                   "displayText": "BACK TO MENU",
-                                    "id": 'command'
+                                    "id": 'command2'
                                                 }
                                               }
                                             ]
@@ -935,7 +990,7 @@ alpha.sendMessage('628176878884@s.whatsapp.net',`*ORDER:* ${resultNYA}`, text)
                                                                  {
                                                                              "quickReplyButton": {
                                                                                "displayText": "BACK TO MENU",
-                                                                 "id": 'command'
+                                                                 "id": 'command2'
                                                                              }
                                                                            }
                                                                          ]
@@ -993,45 +1048,47 @@ alpha.sendMessage('628176878884@s.whatsapp.net',`*ORDER:* ${resultNYA}`, text)
 
 // M E N U - L O C
 case 'menu':{
-covid = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
-
-	if(typemenu == 'templateLocation'){
-var but = [
-          {
-            "urlButton": {
-              "displayText": "YouTube Owner",
-              "url": `${youtube}`
+  covid = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
+  covidworld_positif = await fetchJson(`https://api.kawalcorona.com/positif`)
+  covidworld_meninggal = await fetchJson(`https://api.kawalcorona.com/meninggal`)
+  vaksin = await fetchJson(`https://vaksincovid19-api.vercel.app/api/vaksin`)
+  
+    if(typemenu == 'templateLocation'){
+  var but = [
+            {
+              "urlButton": {
+                "displayText": "YouTube Owner",
+                "url": `${youtube}`
+              }
+            },
+            {
+              "urlButton": {
+                "displayText": "Website Owner",              
+                "url": `${myweb}`
+  
+              }
+            },
+            {
+              "quickReplyButton": {
+                "displayText": "TOPUP DM",
+  "id": 'topupdm'
+              }
+            },
+            {
+              "quickReplyButton": {
+                "displayText": "OWNER",
+  "id": 'owner'
+              }
+            },
+  {
+              "quickReplyButton": {
+                "displayText": "LIST MENU",
+  "id": 'command2'
+              }
             }
-          },
-          {
-            "urlButton": {
-              "displayText": "Website Owner",              
-              "url": `${myweb}`
-
-            }
-          },
-          {
-            "quickReplyButton": {
-              "displayText": "TOPUP DM",
-"id": 'topupdm'
-            }
-          },
-          {
-            "quickReplyButton": {
-              "displayText": "OWNER",
-"id": 'owner'
-            }
-          },
-{
-            "quickReplyButton": {
-              "displayText": "LIST MENU",
-"id": 'command'
-            }
-          }
-        ]
-        await alpha.send5ButLoc(from, lang.menunya(salam, covid, WaktuWib, WaktuWita, WaktuWit, pushname) , `© ${ownername}`,pp_bot, but )
+          ]
+          await alpha.send5ButLoc(from, lang.menunya(salam, covid, vaksin, covidworld_positif, covidworld_meninggal, WaktuWib, WaktuWita, WaktuWit, pushname) , `© ${ownername}`,pp_bot, but )
         
-
 // M E N U - T E N O R
         if(typemenu == 'templateTenor'){
          but = [
@@ -1063,7 +1120,7 @@ var but = [
 {
             "quickReplyButton": {
               "displayText": "List Command",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1107,6 +1164,111 @@ var but = [
 }
 }
         break    
+
+// C O M M A N D  V2
+        case 'command2':{
+          alpha.sendList(from, 'Pilih Menu', `© ${ownername}`, salam + pushname, 'SELECT HERE', [
+                  {
+                    "title": "Menu-1",
+                    "rows": [
+                      {
+                        "title": "Semua Menu",
+                        "rowId": "allmenu"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-2",
+                    "rows": [
+                      {
+                        "title": "Menu Owner",
+                        "rowId": "ownercmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-3",
+                    "rows": [
+                      {
+                        "title": "Menu Group",
+                        "rowId": "groupcmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-4",
+                    "rows": [
+                      {
+                        "title": "Menu Searching",
+                        "rowId": "searchcmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-5",
+                    "rows": [
+                      {
+                        "title": "Menu Converter",
+                        "rowId": "convertercmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-6",
+                    "rows": [
+                      {
+                        "title": "Menu Sticker",
+                        "rowId": "stickercmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-7",
+                    "rows": [
+                      {
+                        "title": "Menu Downloader",
+                        "rowId": "downloadercmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-8",
+                    "rows": [
+                      {
+                        "title": "Menu Random Anime",
+                        "rowId": "ranimecmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-9",
+                    "rows": [
+                      {
+                        "title": "Menu Lainnya",
+                        "rowId": "othercmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-10",
+                    "rows": [
+                      {
+                        "title": "Menu Text Pro",
+                        "rowId": "textprocmd"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Menu-11",
+                    "rows": [
+                      {
+                        "title": "Contributors",
+                        "rowId": "tqto"
+                      }
+                    ]
+                  }], {quoted:fgif})
+                }
+                break
 
 // A L L  M E N U
 case 'allmenu':
@@ -1178,7 +1340,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1217,7 +1379,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1256,7 +1418,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1295,7 +1457,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1334,7 +1496,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1373,7 +1535,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1412,7 +1574,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1451,7 +1613,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1490,7 +1652,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1529,7 +1691,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1569,7 +1731,7 @@ case 'ownercmd': case'ownermenu':
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
@@ -1607,7 +1769,7 @@ case 'nsfwcmd': case 'nsfwcommand':{
 {
             "quickReplyButton": {
               "displayText": "BACK TO LIST",
-"id": 'command'
+"id": 'command2'
             }
           }
         ]
