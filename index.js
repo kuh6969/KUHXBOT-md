@@ -122,6 +122,7 @@ module.exports = alpha = async (alpha, m, chatUpdate) => {
 		const reply = async (teks) => {
 			return await alpha.sendFakeLink(m.chat,teks,salam, pushname,ownername, thumbnail, myweb, m)
 		}
+
         // Bot Status
         const used = process.memoryUsage()
         const cpus = os.cpus().map(cpu => {
