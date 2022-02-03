@@ -87,7 +87,9 @@ exports.notNum = (q) => {
 }
 exports.menunya = (salam, covid, vaksin, covidworld_positif, covidworld_meninggal, WaktuWib, WaktuWita, WaktuWit, pushname) =>{
 	return`Hai kak ${pushname} 👋 selamat ${salam} ,
-bot ini adalah Beta Multi-Device Whatsapp. Jika kamu menemukan semacam bug atau kesalahan mohon dimaklumi dulu ya, lapor owner agar segera di perbaiki 🙏 
+Bot Nya Banyak BUG Banh
+
+JIKA INGIN MELIHAT SEMUA FITUR KETIK *allmenu*
 
 
 『 *INDO TIME* 』
