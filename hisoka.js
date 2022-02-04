@@ -654,10 +654,10 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             }
             break
             case 'smeme': case 'stickermeme': case 'stickmeme': {
-                if (!text) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
-                if (text.includes('|')) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
-                if (!/image/.test(mime)) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
-                reply(lang.wait())
+                if (!text) return m.reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
+                if (text.includes('|')) return m.reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
+                if (!/image/.test(mime)) return m.reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
+                m.reply(`Loading...`)
                 arg = args.join(' ')
                 mee = await hisoka.downloadAndSaveMediaMessage(quoted)
                 mem = await TelegraPh(mee)
@@ -667,10 +667,10 @@ ${Array.from(room.jawaban, (jawaban, index) => {
                 }
                 break
                 case 'memegen': case 'smeme2': {
-                if (!text) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
-                if (!text.includes('|')) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
-                if (!/image/.test(mime)) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
-                reply(mess.wait)
+                if (!text) return m.reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
+                if (!text.includes('|')) return m.reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
+                if (!/image/.test(mime)) return m.reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
+                m.reply(`Loading...`)
                 arg = args.join(' ')
                 atas = arg.split('|')[0]
                 bawah = arg.split('|')[1]
