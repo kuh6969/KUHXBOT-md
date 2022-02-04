@@ -22,6 +22,7 @@ const { performance } = require('perf_hooks')
 const { Primbon } = require('scrape-primbon')
 const primbon = new Primbon()
 const { smsg, getGroupAdmins, formatp, tanggal, formatDate, getTime, isUrl, sleep, clockString, runtime, fetchJson, getBuffer, jsonformat, format, parseMention, getRandom } = require('./lib/myfunc')
+const { bytesToSize,  UploadFileUgu, webp2mp4File, TelegraPh } = require('./lib/uploader')
 const { waMessageID } = require('@adiwajshing/baileys/lib/Store/make-in-memory-store')
 
 let cmdmedia = JSON.parse(fs.readFileSync('./src/cmdmedia.json'))
@@ -1966,7 +1967,9 @@ case 'list': case 'menu': case 'help': case '?': {
     covidworld_sembuh = await fetchJson(`https://api.kawalcorona.com/sembuh`)
     vaksin = await fetchJson(`https://vaksincovid19-api.vercel.app/api/vaksin`)
 anu = `
-Hai Kak ${pushname}
+${sayingtime} ${pushname} 
+
+Bot Ini Aktif 24 Jam, Jika Ada BUG / BOT Tidak Merespon Bisa Hubungi Owner
 
 『 *INDO TIME* 』
 〆 ${WaktuWib} WIB
