@@ -40,7 +40,7 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
     try {
         var body = (m.mtype === 'conversation') ? m.message.conversation : (m.mtype == 'imageMessage') ? m.message.imageMessage.caption : (m.mtype == 'videoMessage') ? m.message.videoMessage.caption : (m.mtype == 'extendedTextMessage') ? m.message.extendedTextMessage.text : (m.mtype == 'buttonsResponseMessage') ? m.message.buttonsResponseMessage.selectedButtonId : (m.mtype == 'listResponseMessage') ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (m.mtype == 'templateButtonReplyMessage') ? m.message.templateButtonReplyMessage.selectedId : (m.mtype === 'messageContextInfo') ? (m.message.buttonsResponseMessage?.selectedButtonId || m.message.listResponseMessage?.singleSelectReply.selectedRowId || m.text) : ''
         var budy = (typeof m.text == 'string' ? m.text : '')
-        var prefix = prefa ? /^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi.test(body) ? body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi)[0] : "" : prefa ?? global.prefix
+        var prefix = prefa ? /^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi.test(body) ? body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi)[0] : "." : prefa ?? global.prefix
         const isCmd = body.startsWith(prefix)
         const from = mek.key.remoteJid
         const WaktuWib = moment.tz('Asia/Jakarta').format('DD/MM HH:mm:ss')
@@ -56,13 +56,35 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
         const quoted = m.quoted ? m.quoted : m
         const mime = (quoted.msg || quoted).mimetype || ''
 	    const isMedia = /image|video|sticker|audio/.test(mime)
+
+        const salam = moment().tz('Asia/Jakarta').format('HH:mm:ss')
+if(salam < "23:59:00"){
+var sayingtime = 'Selamat Malam'
+}
+if(salam < "19:00:00"){
+var sayingtime = 'Selamat Petang'
+}
+if(salam < "18:00:00"){
+var sayingtime = 'Selamat Sore'
+}
+if(salam < "15:00:00"){
+var sayingtime = 'Selamat Siang'
+}
+if(salam < "11:00:00"){
+var sayingtime = 'Selamat Pagi'
+}
+if(salam < "05:00:00"){
+var sayingtime = 'Selamat Malam'
+}
 	
         // Group
         const groupMetadata = m.isGroup ? await hisoka.groupMetadata(m.chat).catch(e => {}) : ''
         const groupName = m.isGroup ? groupMetadata.subject : ''
         const participants = m.isGroup ? await groupMetadata.participants : ''
         const groupAdmins = m.isGroup ? await getGroupAdmins(participants) : ''
+        const groupOwner = m.isGroup ? groupMetadata.owner : ''
     	const isBotAdmins = m.isGroup ? groupAdmins.includes(botNumber) : false
+        const isGroupOwner = m.isGroup ? groupOwner.includes(m.sender) : false
         const isGroupAdmins = m.isGroup ? groupAdmins.includes(m.sender) : false
 
         // Bot Status
@@ -424,7 +446,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
 	case 'kick': {
 		if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins) throw mess.admin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'remove').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
@@ -432,7 +454,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
 	case 'add': {
 		if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins) throw mess.admin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
 		let users = m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'add').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
@@ -440,7 +462,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
 	case 'promote': {
 		if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins) throw mess.admin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'promote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
@@ -448,7 +470,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
 	case 'demote': {
 		if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins) throw mess.admin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'demote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
@@ -478,7 +500,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
                 if (!quoted) throw 'Reply Image'
                 if (/image/.test(mime)) throw `balas image dengan caption *${prefix + command}*`
                 let media = await hisoka.downloadAndSaveMediaMessage(quoted)
-                if (!m.isGroup && !isBotAdmins && !isGroupAdmins) {
+                if (!m.isGroup && !isBotAdmins && !isGroupAdmins && !isGroupOwner) {
                     await hisoka.updateProfilePicture(m.chat, { url: media }).catch((err) => fs.unlinkSync(media))
 		    await fs.unlinkSync(media)
                 } else if (!isCreator) {
@@ -631,6 +653,34 @@ ${Array.from(room.jawaban, (jawaban, index) => {
                 }
             }
             break
+            case 'smeme': case 'stickermeme': case 'stickmeme': {
+                if (!text) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
+                if (text.includes('|')) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
+                if (!/image/.test(mime)) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks*`)
+                reply(lang.wait())
+                arg = args.join(' ')
+                mee = await hisoka.downloadAndSaveMediaMessage(quoted)
+                mem = await TelegraPh(mee)
+                meme = `https://api.memegen.link/images/custom/-/${arg}.png?background=${mem}`
+                memek = await hisoka.sendImageAsSticker(m.chat, meme, m, { packname: global.packname, author: global.author })
+                await fs.unlinkSync(memek)
+                }
+                break
+                case 'memegen': case 'smeme2': {
+                if (!text) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
+                if (!text.includes('|')) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
+                if (!/image/.test(mime)) return reply(`Kirim/Reply Foto Dengan Caption ${prefix + command} *teks|teks*`)
+                reply(mess.wait)
+                arg = args.join(' ')
+                atas = arg.split('|')[0]
+                bawah = arg.split('|')[1]
+                let abeb = await hisoka.downloadAndSaveMediaMessage(quoted)
+                let abe = await TelegraPh(abeb)
+                let upz = `https://api.memegen.link/images/custom/${atas}/${bawah}.png?background=${util.format(abe)}`
+                let mengmeme = await hisoka.sendImageAsSticker(m.chat, upz, m, { packname: global.packname, author: global.author })
+                await fs.unlinkSync(mengmeme)
+                }
+                break
             case 'ebinary': {
             if (!m.quoted.text && !text) throw `Kirim/reply text dengan caption ${prefix + command}`
             let { eBinary } = require('./lib/binary')
@@ -1631,24 +1681,60 @@ ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Obje
                 hisoka.sendContact(m.chat, global.owner, m)
             }
             break
-            case 'command': {
-                const buttons = [
-                    {buttonId: 'id1', buttonText: {displayText: 'Button 1'}, type: 1},
-                    {buttonId: 'id2', buttonText: {displayText: 'Button 2'}, type: 1},
-                    {buttonId: 'id3', buttonText: {displayText: 'Button 3'}, type: 1}
-                  ]
-                  
-                  const buttonMessage = {
-                      image: {url: 'https://example.com/image.jpeg'},
-                      caption: "Hi it's button message",
-                      footerText: 'Hello World',
-                      buttons: buttons,
-                      headerType: 4
-                  }
-                  
-                  const sendMsg = await sock.sendMessage(id, buttonMessage)
+case 'command': {
+                let sections = [
+                    {
+                    title: "Menu - 1",
+                    rows: [
+                        {title: "Semua Perintah", rowId: "allmenu", description: "Memunculkan Semua Menu"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 2",
+                    rows: [
+                        {title: "Anonymous Chat", rowId: "anonmenu", description: "Memunculkan Menu Anonymous Chat"}
+                    ]
+                    },
+                ]
+                
+                let listMessage = {
+                  text: "Pilih Menu Disini",
+                  footer: "Kuh",
+                  title: `${sayingtime} ${pushname}`,
+                  buttonText: "CLICK HERE",
+                  sections
+                }
+                
+                hisoka.sendMessage(m.chat, listMessage, { quoted: m })
             }
-            break
+                break
+case 'topupdm': {
+                    let sections = [
+                        {
+                        title: "Kategori - 1",
+                        rows: [
+                            {title: "Free Fire", rowId: "dmff", description: "Menampilkan List Topup Free Fire"}
+                        ]
+                        },
+                       {
+                        title: "Kategori - 2",
+                        rows: [
+                            {title: "Mobile Legends A", rowId: "anonmenu", description: "Menampilkan List Topup Mobile Legends Paket A"}
+                        ]
+                        },
+                    ]
+                    
+                    let listMessage = {
+                      text: "Pilih Jenis Game Disini",
+                      footer: "Kuh",
+                      title: `${sayingtime} ${pushname}`,
+                      buttonText: "CLICK HERE",
+                      sections
+                    }
+                    
+                    hisoka.sendMessage(m.chat, listMessage, { quoted: m })
+                }
+                    break
 case 'allmenu':{
 anu = `
 ┌──⭓ *Anonymous Chat Menu*
@@ -1766,7 +1852,9 @@ anu = `
 │
 │⭔ ${prefix}toimage
 │⭔ ${prefix}removebg
-│⭔ ${prefix}sticker
+│⭔ ${prefix}memegen
+│⭔ ${prefix}smeme
+│⭔ ${prefix}tovideo
 │⭔ ${prefix}emojimix
 │⭔ ${prefix}tovideo
 │⭔ ${prefix}togif
@@ -1851,18 +1939,18 @@ anu = `
                                                     }
                                                 }, {
                                 quickReplyButton: {
-                                 displayText: 'ERROR BANH',
-                                id: 'command'
+                                 displayText: 'TOPUP DM',
+                                id: 'topupdm'
                                                     }
                                                 }, {
                                  quickReplyButton: {
-                                 displayText: 'ERROR BANH',
-                                 id: 'command'
+                                 displayText: 'OWNER',
+                                 id: 'owner'
                                                     }  
                                                 }, {
                                 quickReplyButton: {
-                                 displayText: 'OWNER',
-                                 id: 'owner'
+                                 displayText: 'BACK TO MENU',
+                                 id: 'menu'
                                                     }
                                                 }]
                                             }
@@ -1875,6 +1963,7 @@ case 'list': case 'menu': case 'help': case '?': {
     covid = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
     covidworld_positif = await fetchJson(`https://api.kawalcorona.com/positif`)
     covidworld_meninggal = await fetchJson(`https://api.kawalcorona.com/meninggal`)
+    covidworld_sembuh = await fetchJson(`https://api.kawalcorona.com/sembuh`)
     vaksin = await fetchJson(`https://vaksincovid19-api.vercel.app/api/vaksin`)
 anu = `
 Hai Kak ${pushname}
@@ -1897,7 +1986,7 @@ Hai Kak ${pushname}
 
 『 *COVID WORLD* 』
 〆 Positif : ${covidworld_positif.value}
-〆 Sembuh : No Data
+〆 Sembuh : ${covidworld_sembuh.value}
 〆 Meninggal : ${covidworld_meninggal.value}
 `
 const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
@@ -1919,18 +2008,18 @@ templateMessage: {
                                     }
                                 }, {
                 quickReplyButton: {
-                displayText: 'LIST MENU [ERROR]',
-                id: 'command'
+                displayText: 'TOPUP DM',
+                id: 'topupdm'
                                                            }
                                                        }, {
                  quickReplyButton: {
-                 displayText: 'LIST MENU [ALTERNATIF]',
-                 id: 'allmenu'
+                 displayText: 'OWNER',
+                 id: 'owner'
                                     }  
                                 }, {
                 quickReplyButton: {
-                 displayText: 'OWNER',
-                 id: 'owner'
+                 displayText: 'LIST MENU',
+                 id: 'command'
                                     }
                                 }]
                             }
