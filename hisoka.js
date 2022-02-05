@@ -24,6 +24,7 @@ const primbon = new Primbon()
 const { smsg, getGroupAdmins, formatp, tanggal, formatDate, getTime, isUrl, sleep, clockString, runtime, fetchJson, getBuffer, jsonformat, format, parseMention, getRandom } = require('./lib/myfunc')
 const { bytesToSize,  UploadFileUgu, webp2mp4File, TelegraPh } = require('./lib/uploader')
 const { waMessageID } = require('@adiwajshing/baileys/lib/Store/make-in-memory-store')
+const { data } = require('cheerio/lib/api/attributes')
 
 let cmdmedia = JSON.parse(fs.readFileSync('./src/cmdmedia.json'))
 let game = JSON.parse(fs.readFileSync("./src/game.json"))
@@ -54,6 +55,8 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
         const isCreator = [botNumber, ...global.owner].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
         const itsMe = m.sender == botNumber ? true : false
         const text = q = args.join(" ")
+        const versibot = (global.botversion)
+        const name = (global.nama)
         const quoted = m.quoted ? m.quoted : m
         const mime = (quoted.msg || quoted).mimetype || ''
 	    const isMedia = /image|video|sticker|audio/.test(mime)
@@ -127,6 +130,28 @@ var sayingtime = 'Selamat Malam'
         }
         
         // Function
+        const sendFileFromUrl = async (from, url, caption, mek, men) => {
+            let mime = '';
+            let res = await axios.head(url)
+            mime = res.headers['content-type']
+            if (mime.split("/")[1] === "gif") {
+                return hisoka.sendMessage(from, { video: await getBuffer(url), caption: caption, gifPlayback: true, mentions: men ? men : []}, {quoted: m})
+                }
+            let type = mime.split("/")[0]+"Message"
+            if(mime === "application/pdf"){
+                return hisoka.sendMessage(m.chat, { document: await getBuffer(url), mimetype: 'application/pdf', caption: caption, mentions: men ? men : []}, {quoted: mek })
+            }
+            if(mime.split("/")[0] === "image"){
+                return hisoka.sendMessage(m.chat, { image: await getBuffer(url), caption: caption, mentions: men ? men : []}, {quoted: m})
+            }
+            if(mime.split("/")[0] === "video"){
+                return hisoka.sendMessage(m.chat, { video: await getBuffer(url), caption: caption, mentions: men ? men : []}, {quoted: m})
+            }
+            if(mime.split("/")[0] === "audio"){
+                return hisoka.sendMessage(m.chat, { audio: await getBuffer(url), caption: caption, mentions: men ? men : [], mimetype: 'audio'}, {quoted: m })
+            }
+        }
+
         const sendButton = (type, from, text, buttons, men, quoted, options) => { 
             if (type == 'image') {
             hisoka.sendMessage(from, { caption: text, image: options ? options : fs.readFileSync(thumbnail), buttons: buttons, headerType: 'IMAGE', mentions: men }, {quoted: m})
@@ -188,7 +213,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebaklagu[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await m.reply(`🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? kirim ${prefix}tebak lagu`)
+           await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
                 delete tebaklagu[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -206,7 +231,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebakgambar[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await m.reply(`🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? kirim ${prefix}tebak gambar`)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
                 delete tebakgambar[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -215,7 +240,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebakkata[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await m.reply(`🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? kirim ${prefix}tebak kata`)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
                 delete tebakkata[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -224,7 +249,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = caklontong[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await m.reply(`🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? kirim ${prefix}tebak lontong`)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
                 delete caklontong[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -233,7 +258,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebakkalimat[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await m.reply(`🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? kirim ${prefix}tebak kalimat`)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
                 delete tebakkalimat[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -242,7 +267,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebaklirik[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await m.reply(`🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? kirim ${prefix}tebak lirik`)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
                 delete tebaklirik[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -251,7 +276,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebaktebakan[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await m.reply(`🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? kirim ${prefix}tebak tebakan`)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak tebakan', buttonText: { displayText: 'Tebak Tebakan' }, type: 1 }], `🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
                 delete tebaktebakan[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -416,7 +441,11 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             let jawab = `👫Jodoh mu adalah
 
 @${me.split('@')[0]} ❤️ @${jodoh.split('@')[0]}`
-            hisoka.sendTextWithMentions(m.chat, jawab, m)
+            let ments = [me, jodoh]
+            let buttons = [
+                        { buttonId: 'jodohku', buttonText: { displayText: 'Jodohku' }, type: 1 }
+                    ]
+                    await hisoka.sendButtonText(m.chat, buttons, jawab, '@ramadhankukuh', m, {mentions: ments})
             }
             break
             case 'jadian': {
@@ -427,7 +456,11 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             let jawab = `Ciee yang Jadian💖 Jangan lupa pajak jadiannya🐤
 
 @${orang.split('@')[0]} ❤️ @${jodoh.split('@')[0]}`
-            hisoka.sendTextWithMentions(m.chat, jawab, m)
+            let menst = [orang, jodoh]
+            let buttons = [
+                        { buttonId: 'jadian', buttonText: { displayText: 'Jodohku' }, type: 1 }
+                    ]
+                    await hisoka.sendButtonText(m.chat, buttons, jawab, '@ramadhankukuh', m, {mentions: ments})
             }
             break
             case 'join': {
@@ -491,9 +524,17 @@ ${Array.from(room.jawaban, (jawaban, index) => {
 	    case 'setname': case 'setsubject': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins) throw mess.admin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
                 if (!text) throw 'Text ?'
-                await hisoka.groupUpdateSubject(m.chat, text).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
+                await hisoka.groupUpdateSubject(m.chat, text).then((res) => m.reply(mess.success)).catch((err) => m.reply(jsonformat(err)))
+            }
+            break
+          case 'setdesc': case 'setdesk': {
+                if (!m.isGroup) throw mess.group
+                if (!isBotAdmins) throw mess.botAdmin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!text) throw 'Text ?'
+                await hisoka.groupUpdateDescription(m.chat, text).then((res) => m.reply(mess.success)).catch((err) => m.reply(jsonformat(err)))
             }
             break
             case 'setprofile': case 'setpp': {
@@ -513,26 +554,34 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             case 'group': case 'grup': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins) throw mess.admin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
                 if (args[0].toLowerCase() === 'close') {
                     await hisoka.groupSettingUpdate(m.chat, 'announcement').then((res) => m.reply(`Sukses Menutup Group`)).catch((err) => m.reply(jsonformat(err)))
                 } else if (args[0].toLowerCase() === 'open') {
                     await hisoka.groupSettingUpdate(m.chat, 'not_announcement').then((res) => m.reply(`Sukses Membuka Group`)).catch((err) => m.reply(jsonformat(err)))
                 } else {
-                m.reply(`Option : open/close`)
+                let buttons = [
+                        { buttonId: 'group open', buttonText: { displayText: 'Open' }, type: 1 },
+                        { buttonId: 'group close', buttonText: { displayText: 'Close' }, type: 1 }
+                    ]
+                    await hisoka.sendButtonText(m.chat, buttons, `Mode Group`, '@ramadhankukuh', m)
              }
             }
             break
             case 'editinfo': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins) throw mess.admin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
              if (args[0] === 'open'){
                 await hisoka.groupSettingUpdate(m.chat, 'unlocked').then((res) => m.reply(`Sukses Membuka Edit Info Group`)).catch((err) => m.reply(jsonformat(err)))
              } else if (args[0] === 'close'){
                 await hisoka.groupSettingUpdate(m.chat, 'locked').then((res) => m.reply(`Sukses Menutup Edit Info Group`)).catch((err) => m.reply(jsonformat(err)))
              } else {
-             m.reply(`Option : open/close`)
+             let buttons = [
+                        { buttonId: 'editinfo open', buttonText: { displayText: 'Open' }, type: 1 },
+                        { buttonId: 'editinfo close', buttonText: { displayText: 'Close' }, type: 1 }
+                    ]
+                    await hisoka.sendButtonText(m.chat, buttons, `Mode Edit Info`, '@ramadhankukuh', m)
             }
             }
             break
@@ -545,13 +594,33 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             case 'ephemeral': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins) throw mess.admin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
                 if (!text) throw 'Masukkan value enable/disable'
                 if (args[0] === 'enable') {
                     await hisoka.sendMessage(m.chat, { disappearingMessagesInChat: WA_DEFAULT_EPHEMERAL }).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
                 } else if (args[0] === 'disable') {
                     await hisoka.sendMessage(m.chat, { disappearingMessagesInChat: false }).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
                 }
+            }
+            break
+            case 'tagall': {
+                if (!m.isGroup) throw mess.group
+                if (!isBotAdmins) throw mess.botAdmin
+                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+let teks = `══✪〘 *👥 Tag All* 〙✪══
+ 
+ ➲ *Pesan : ${q ? q : 'kosong'}*\n\n`
+                for (let mem of participants) {
+                teks += `⭔ @${mem.id.split('@')[0]}\n`
+                }
+                hisoka.sendMessage(m.chat, { text: teks, mentions: participants.map(a => a.id) }, { quoted: m })
+                }
+                break
+                case 'hidetag': {
+            if (!m.isGroup) throw mess.group
+            if (!isBotAdmins) throw mess.botAdmin
+            if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+            hisoka.sendMessage(m.chat, { text : q ? q : '' , mentions: participants.map(a => a.id)}, { quoted: m })
             }
             break
             case 'delete': case 'del': {
@@ -633,7 +702,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
              break
              case 'listonline': case 'liston': {
                     let id = args && /\d+\-\d+@g.us/.test(args[0]) ? args[0] : m.chat
-                    let online = [...Object.keys(store.presences[id]), hisoka.user.id]
+                    let online = [...Object.keys(store.presences[id]), botNumber]
                     hisoka.sendText(m.chat, 'List Online:\n\n' + online.map(v => '⭔ @' + v.replace(/@.+/, '')).join`\n`, m, { mentions: online })
              }
              break
@@ -923,12 +992,22 @@ ${Array.from(room.jawaban, (jawaban, index) => {
                 hisoka.sendMessage(m.chat, { image: { url: result }, caption: '⭔ Media Url : '+result }, { quoted: m })
             }
             break
-            case 'anime': case 'waifu': case 'husbu': case 'neko': case 'shinobu': case 'megumin': {
-                m.reply(mess.wait)
-                let anu = await getBuffer(api('zenz', '/api/random/anime/'+command, 'apikey'))
-                hisoka.sendMessage(m.chat, { image: anu, caption: `Download From ${text}` }, { quoted: m})
-            }
-            break
+            case 'cry':case 'kill':case 'hug':case 'pat':case 'lick':case 'kiss':case 'bite':case 'yeet':case 'neko':case 'bully':case 'bonk':case 'wink':case 'poke':case 'nom':case 'slap':case 'waifu':case 'smile':case 'wave':case 'awoo':case 'blush':case 'smug':case 'glomp':case 'happy':case 'dance':case 'cringe':case 'cuddle':case 'highfive':case 'shinobu':case 'megumin':case 'handhold':
+                axios.get(`https://api.waifu.pics/sfw/${command}`)
+                .then(({data}) => {
+                let buttons = [
+                        {buttonId: `${command}`, buttonText: {displayText: 'Next Image'}, type: 1}
+                    ]
+                    let buttonMessage = {
+                        image: { url: data.url },
+                        caption: `Random SFW`,
+                        footer: name,
+                        buttons: buttons,
+                        headerType: 4
+                    }
+                    hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
+                })
+                break
             case 'coffe': case 'kopi': {
             let buttons = [
                     {buttonId: `coffe`, buttonText: {displayText: 'Next Image'}, type: 1}
@@ -936,7 +1015,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
                 let buttonMessage = {
                     image: { url: 'https://coffee.alexflipnote.dev/random' },
                     caption: `☕ Random Coffe`,
-                    footer: 'Kukuh',
+                    footer: name,
                     buttons: buttons,
                     headerType: 4
                 }
@@ -1687,13 +1766,79 @@ case 'command': {
                     {
                     title: "Menu - 1",
                     rows: [
-                        {title: "Semua Perintah", rowId: "allmenu", description: "Memunculkan Semua Menu"}
+                        {title: "Semua Perintah", rowId: "allmenu", description: "Menampilkan Semua Menu"}
                     ]
                     },
                    {
                     title: "Menu - 2",
                     rows: [
-                        {title: "Anonymous Chat", rowId: "anonmenu", description: "Memunculkan Menu Anonymous Chat"}
+                        {title: "Anonymous Chat", rowId: "anonmenu", description: "Menampilkan Menu Anonymous Chat"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 3",
+                    rows: [
+                        {title: "Menu Downloader", rowId: "downloadmenu", description: "Menampilkan Menu Downloader YT / IG / TT / TWIT"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 4",
+                    rows: [
+                        {title: "Menu Group", rowId: "grubmenu", description: "Menampilkan Menu Group"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 5",
+                    rows: [
+                        {title: "Menu Searching", rowId: "searchmenu", description: "Menampilkan Menu Pencaharian"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 6",
+                    rows: [
+                        {title: "Menu Primbon", rowId: "primbonmenu", description: "Menampilkan Menu Primbon"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 7",
+                    rows: [
+                        {title: "Menu Image", rowId: "imagemenu", description: "Menampilkan Menu Image"}
+                    ]
+                    },
+                                       {
+                    title: "Menu - 8",
+                    rows: [
+                        {title: "Menu Fun", rowId: "funmenu", description: "Menampilkan Menu Fun"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 9",
+                    rows: [
+                        {title: "Menu Converter", rowId: "convertmenu", description: "Menampilkan Menu Converter Link / Musik / Gambar Ke Stiker"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 10",
+                    rows: [
+                        {title: "Menu Random", rowId: "randommenu", description: "Menampilkan Menu Random"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 11",
+                    rows: [
+                        {title: "Menu Database", rowId: "databasemenu", description: "Menampilkan Menu Database BOT"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 12",
+                    rows: [
+                        {title: "Menu Other", rowId: "othermenu", description: "Menampilkan Menu Lainnya"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 13",
+                    rows: [
+                        {title: "Menu Owner", rowId: "ownermenu", description: "Menampilkan Menu Khusus Owner BOT"}
                     ]
                     },
                 ]
@@ -1897,6 +2042,8 @@ anu = `
 │⭔ ${prefix}setname [text]
 │⭔ ${prefix}group [option]
 │⭔ ${prefix}editinfo [option]
+│⭔ ${prefix}hidetag [text]
+│⭔ ${prefix}tagall [text]
 │⭔ ${prefix}add @user
 │⭔ ${prefix}kick @user
 │⭔ ${prefix}promote @user
@@ -1927,7 +2074,7 @@ anu = `
                         hydratedContentText: anu,
                             locationMessage: {
                                 jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                    hydratedFooterText: 'SEMENTARA SEMUA FITUR MENGGUNAKAM LIST BIASA, UNTUK BUTTON DITUNGGU UPDATE SELANJUTNYA',
+                                    hydratedFooterText: '@ramadhankukuh',
                                          hydratedButtons: [{
                                  urlButton: {
                                  displayText: 'Website Owner',
@@ -1998,7 +2145,7 @@ templateMessage: {
         hydratedContentText: anu,
             locationMessage: {
                 jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                    hydratedFooterText: 'kuh',
+                    hydratedFooterText: '@ramadhankukuh',
                          hydratedButtons: [{
                  urlButton: {
                  displayText: 'Website Owner',
@@ -2062,7 +2209,7 @@ templateMessage: {
                 }
 
                 if (budy.startsWith('$')) {
-                    if (!isCreator) return reply(mess.owner)
+                    if (!isCreator) return m.reply(mess.owner)
                     exec(budy.slice(2), (err, stdout) => {
                         if(err) return m.reply(err)
                         if (stdout) return m.reply(stdout)
