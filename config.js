@@ -18,6 +18,8 @@ global.APIKeys = {
 }
 
 // Other
+global.lolkey1 = '1756919c2cec2aa7d7769084'
+global.lolkey2 = 'c0163b349edd0273f5df2835'
 global.owner = ['12816245470']
 global.packname = 'IG : @ramadhankukuh'
 global.author = 'B O T   W A N G S A F'
@@ -33,6 +35,8 @@ global.mess = {
     private: 'Fitur Digunakan Hanya Untuk Private Chat!',
     bot: 'Fitur Khusus Pengguna Nomor Bot',
     wait: 'Loading...',
+    waittopup: 'Sedang Dalam Proses...',
+    waitcovid: 'Sedang Memuat Data COVID-19...',
 }
 global.thumb = fs.readFileSync('./lib/hisoka.jpg')
 

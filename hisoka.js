@@ -16,6 +16,7 @@ const path = require('path')
 const os = require('os')
 const moment = require('moment-timezone')
 const speed = require('performance-now')
+const crypto = require('crypto')
 const { herolist } = require('./lib/herolist.js')
 const { herodetails } = require('./lib/herodetail.js')
 const { performance } = require('perf_hooks')
@@ -60,6 +61,9 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
         const quoted = m.quoted ? m.quoted : m
         const mime = (quoted.msg || quoted).mimetype || ''
 	    const isMedia = /image|video|sticker|audio/.test(mime)
+        const createSerial = (size) => {
+            return crypto.randomBytes(size).toString('hex').slice(0, size)
+            }
 
         const salam = moment().tz('Asia/Jakarta').format('HH:mm:ss')
 if(salam < "23:59:00"){
@@ -825,9 +829,9 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
                 if (!isGroupAdmins && !isGroupOwner) throw mess.admin
-                if (args[0].toLowerCase() === 'close') {
+                if (args[0] === 'close'){
                     await hisoka.groupSettingUpdate(m.chat, 'announcement').then((res) => m.reply(`Sukses Menutup Group`)).catch((err) => m.reply(jsonformat(err)))
-                } else if (args[0].toLowerCase() === 'open') {
+                } else if (args[0] === 'open'){
                     await hisoka.groupSettingUpdate(m.chat, 'not_announcement').then((res) => m.reply(`Sukses Membuka Group`)).catch((err) => m.reply(jsonformat(err)))
                 } else {
                 let buttons = [
@@ -2031,6 +2035,8 @@ ${cpus.map((cpu, i) => `${i + 1}. ${cpu.model.trim()} (${cpu.speed} MHZ)\n${Obje
                 hisoka.sendContact(m.chat, global.owner, m)
             }
             break
+
+//COMMAND
 case 'command': {
                 let sections = [
                     {
@@ -2096,17 +2102,23 @@ case 'command': {
                    {
                     title: "Menu - 11",
                     rows: [
-                        {title: "Menu Database", rowId: "databasemenu", description: "Menampilkan Menu Database BOT"}
+                        {title: "Menu Random Anime", rowId: "ranomanimemenu", description: "Menampilkan Menu Random Anime"}
                     ]
                     },
                    {
                     title: "Menu - 12",
                     rows: [
-                        {title: "Menu Other", rowId: "othermenu", description: "Menampilkan Menu Lainnya"}
+                        {title: "Menu Database", rowId: "databasemenu", description: "Menampilkan Menu Database BOT"}
                     ]
                     },
                    {
                     title: "Menu - 13",
+                    rows: [
+                        {title: "Menu Other", rowId: "othermenu", description: "Menampilkan Menu Lainnya"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 14",
                     rows: [
                         {title: "Menu Owner", rowId: "ownermenu", description: "Menampilkan Menu Khusus Owner BOT"}
                     ]
@@ -2124,18 +2136,32 @@ case 'command': {
                 hisoka.sendMessage(m.chat, listMessage, { quoted: m })
             }
                 break
+
+//KATEGORI JUALAN
 case 'topupdm': {
                     let sections = [
                         {
                         title: "Kategori - 1",
                         rows: [
-                            {title: "Free Fire", rowId: "dmff", description: "Menampilkan List Topup Free Fire"}
+                            {title: "Promo", rowId: "listpromo", description: "Menampilkan Menu Promo"}
                         ]
                         },
                        {
                         title: "Kategori - 2",
                         rows: [
-                            {title: "Mobile Legends A", rowId: "anonmenu", description: "Menampilkan List Topup Mobile Legends Paket A"}
+                            {title: "Free Fire", rowId: "listdmff", description: "Menampilkan List Topup Free Fire"}
+                        ]
+                        },
+                       {
+                        title: "Kategori - 3",
+                        rows: [
+                            {title: "Mobile Legends", rowId: "listdmml", description: "Menampilkan List Topup Mobile Legends"}
+                        ]
+                        },
+                       {
+                        title: "Kategori - 4",
+                        rows: [
+                            {title: "Mobile Legends Pre Order", rowId: "listdmmlpo", description: "Menampilkan List Topup Mobile Legends Pre Order (Stok Terbatas)"}
                         ]
                         },
                     ]
@@ -2151,6 +2177,276 @@ case 'topupdm': {
                     hisoka.sendMessage(m.chat, listMessage, { quoted: m })
                 }
                     break
+
+//LIST PROMO
+case 'listpromo': {
+                    let sections = [
+                        {
+                        title: "Promo - 1",
+                        rows: [
+                            {title: "Free Fire 1.450 Diamonds", rowId: "owner", description: "IDR 180.000"}
+                        ]
+                        },
+                       {
+                        title: "Promo - 2",
+                        rows: [
+                            {title: "PUBGM 325 UC", rowId: "owner", description: "IDR 50.000"}
+                        ]
+                        },
+                       {
+                        title: "Promo - 3",
+                        rows: [
+                            {title: "Paket Three 33GB", rowId: "owner", description: "IDR 60.000"}
+                        ]
+                        },
+                    ]
+                    
+                    let listMessage = {
+                      text: "Pilih Kategori Promo Disini\nJika Ingin Order Langsung Ke Owner",
+                      footer: "Kuh",
+                      title: `${sayingtime} ${pushname}`,
+                      buttonText: "CLICK HERE",
+                      sections
+                    }
+                    
+                    hisoka.sendMessage(m.chat, listMessage, { quoted: m })
+                }
+                    break
+
+//LIST FREE FIRE
+case 'listdmff': {
+                    let sections = [
+                        {
+                        title: "Free Fire - 1",
+                        rows: [
+                            {title: "70 Diamonds", rowId: "topupff", description: "IDR 9.500"}
+                        ]
+                        },
+                       {
+                        title: "Free Fire - 2",
+                        rows: [
+                            {title: "100 Diamonds", rowId: "topupff", description: "IDR 14.000"}
+                        ]
+                        },
+                       {
+                        title: "Free Fire - 3",
+                        rows: [
+                            {title: "140 Diamonds", rowId: "topupff", description: "IDR 18.500"}
+                        ]
+                        },
+                       {
+                        title: "Free Fire - 4",
+                        rows: [
+                            {title: "210 Diamonds", rowId: "topupff", description: "IDR 28.500"}
+                        ]
+                        },
+                       {
+                        title: "Free Fire - 5",
+                        rows: [
+                            {title: "280 Diamonds", rowId: "topupff", description: "IDR 37.000"}
+                        ]
+                        },
+                       {
+                        title: "Free Fire - 6",
+                        rows: [
+                            {title: "355 Diamonds", rowId: "topupff", description: "IDR 47.000"}
+                        ]
+                        },
+                    ]
+                    
+                    let listMessage = {
+                      text: "Pilih Nominal Diamond Disini",
+                      footer: "Kuh",
+                      title: `${sayingtime} ${pushname}`,
+                      buttonText: "CLICK HERE",
+                      sections
+                    }
+                    
+                    hisoka.sendMessage(m.chat, listMessage, { quoted: m })
+                }
+                    break
+
+//LIST MOBILE LEGENDS
+case 'listdmml': {
+                    let sections = [
+                        {
+                        title: "Mobile Legends - 1",
+                        rows: [
+                            {title: "39 Diamonds", rowId: "topupml", description: "IDR 10.000"}
+                        ]
+                        },
+                       {
+                        title: "Mobile Legends - 2",
+                        rows: [
+                            {title: "65 Diamonds", rowId: "topupml", description: "IDR 15.000"}
+                        ]
+                        },
+                       {
+                        title: "Mobile Legends - 3",
+                        rows: [
+                            {title: "92 Diamonds", rowId: "topupml", description: "IDR 20.000"}
+                        ]
+                        },
+                       {
+                        title: "Mobile Legends - 4",
+                        rows: [
+                            {title: "133 Diamonds", rowId: "topupml", description: "IDR 30.000"}
+                        ]
+                        },
+                       {
+                        title: "Mobile Legends - 5",
+                        rows: [
+                            {title: "184 Diamonds", rowId: "topupml", description: "IDR 40.000"}
+                        ]
+                        },
+                       {
+                        title: "Mobile Legends - 6",
+                        rows: [
+                            {title: "225 Diamonds", rowId: "topupml", description: "IDR 50.000"}
+                        ]
+                        },
+                      {
+                        title: "Mobile Legends - 7",
+                        rows: [
+                            {title: "266 Diamonds", rowId: "topupml", description: "IDR 60.000"}
+                        ]
+                        },
+                    ]
+                    
+                    let listMessage = {
+                      text: "Pilih Nominal Diamond Disini",
+                      footer: "Kuh",
+                      title: `${sayingtime} ${pushname}`,
+                      buttonText: "CLICK HERE",
+                      sections
+                    }
+                    
+                    hisoka.sendMessage(m.chat, listMessage, { quoted: m })
+                }
+                    break
+
+//FORMAT ORDER FREE FIRE
+case 'topupff':{
+	      const serialFF = createSerial(12)
+	      if (!text) throw 'Untuk Melanjutkan Pemesanan\n\nKetik :\ntopupff *id_nominal*\n\nContoh Format :\ntopupff 12345678_70'
+          m.reply(mess.waittopup)
+          arg = args.join(' ')
+          id = arg.split('_')[0]
+          order = arg.split('_')[1]
+          get_result = await fetchJson(`https://api.lolhuman.xyz/api/freefire/${text}?apikey=${global.lolkey1}`)
+          nick = get_result.result
+          txt = `${sayingtime} ${pushname} 
+                                   
+⭔ UID : ${id}
+⭔ Nickname : ${nick}
+⭔ Order : ${order} Diamond
+⭔ Status : Gagal
+⭔ Waktu : ${WaktuWib} WIB
+⭔ No Referensi ${serialFF}: 
+⭔ WhatsApp : ${m.sender.split('@')[0]}`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                templateMessage: {
+                    hydratedTemplate: {
+                        hydratedContentText: txt,
+                            locationMessage: {
+                                jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg')  },
+                                    hydratedFooterText: 'Gagal Ya Banh?? 🗿\nNi Fitur Topup Masih Beta\nMau Topup? Bisa Langsung Order Ke Owner',
+                                         hydratedButtons: [{
+                                 urlButton: {
+                                 displayText: 'Website Owner',
+                                 url: 'https://ramadhankukuh.github.io'
+                                                    }
+                                                }, {
+                                 urlButton: {
+                                 displayText: 'YouTube Owner',
+                                 url: 'https://youtube.com/c/KukuhRamadhann'
+                                                    }
+                                                }, {
+                                quickReplyButton: {
+                                 displayText: 'MENU',
+                                id: 'menu'
+                                                    }
+                                                }, {
+                                 quickReplyButton: {
+                                 displayText: 'OWNER',
+                                 id: 'owner'
+                                                    }  
+                                                }, {
+                                quickReplyButton: {
+                                 displayText: 'PEMBAYARAN',
+                                 id: 'payment'
+                                                    }
+                                                }]
+                                            }
+                                        }
+                                    }), { userJid: m.chat, quoted: m })
+                                    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                }
+break
+
+
+//FORMAT ORDER MOBILE LEGENDS
+case 'topupml':{
+	      const serialML = createSerial(12)
+	      if (!text) throw 'Untuk Melanjutkan Pemesanan\n\nKetik :\ntopupml *id_server_nominal*\n\nContoh Format :\ntopupml 12345678_1234_92'
+          m.reply(mess.waittopup)
+          arg = args.join(' ')
+          id = arg.split('_')[0]
+          server = arg.split('_')[1]
+          order = arg.split('_')[2]
+          get_result = await fetchJson(`https://api.lolhuman.xyz/api/mobilelegend/${id}/${server}?apikey=${global.lolkey2}`)
+          nick = get_result.result
+          txt = `${sayingtime} ${pushname} 
+                                   
+⭔ UID : ${id}
+⭔ Server : ${server}
+⭔ Nickname : ${nick}
+⭔ Order : ${order} Diamond
+⭔ Status : Gagal
+⭔ Waktu : ${WaktuWib} WIB
+⭔ No Referensi ${serialML}
+⭔ WhatsApp : ${m.sender.split('@')[0]}`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                templateMessage: {
+                    hydratedTemplate: {
+                        hydratedContentText: txt,
+                            locationMessage: {
+                                jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg')  },
+                                    hydratedFooterText: 'Gagal Ya Banh?? 🗿\nNi Fitur Topup Masih Beta\nMau Topup? Bisa Langsung Order Ke Owner',
+                                         hydratedButtons: [{
+                                 urlButton: {
+                                 displayText: 'Website Owner',
+                                 url: 'https://ramadhankukuh.github.io'
+                                                    }
+                                                }, {
+                                 urlButton: {
+                                 displayText: 'YouTube Owner',
+                                 url: 'https://youtube.com/c/KukuhRamadhann'
+                                                    }
+                                                }, {
+                                quickReplyButton: {
+                                 displayText: 'MENU',
+                                id: 'menu'
+                                                    }
+                                                }, {
+                                 quickReplyButton: {
+                                 displayText: 'OWNER',
+                                 id: 'owner'
+                                                    }  
+                                                }, {
+                                quickReplyButton: {
+                                 displayText: 'PEMBAYARAN',
+                                 id: 'payment'
+                                                    }
+                                                }]
+                                            }
+                                        }
+                                    }), { userJid: m.chat, quoted: m })
+                                    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                }
+break
+
+//SEMUA MENU
 case 'allmenu':{
 anu = `
 ┌──⭓ *Anonymous Chat Menu*
@@ -2204,6 +2500,40 @@ anu = `
 │⭔ ${prefix}bucinquote
 │⭔ ${prefix}katasenja
 │⭔ ${prefix}puisi
+│
+└───────⭓
+┌──⭓ *Random Anime Menu*
+│
+│⭔ ${prefix}cry
+│⭔ ${prefix}kill
+│⭔ ${prefix}hug
+│⭔ ${prefix}pat
+│⭔ ${prefix}lick
+│⭔ ${prefix}kiss
+│⭔ ${prefix}bite
+│⭔ ${prefix}yeet
+│⭔ ${prefix}neko
+│⭔ ${prefix}bully
+│⭔ ${prefix}bonk
+│⭔ ${prefix}wink
+│⭔ ${prefix}poke
+│⭔ ${prefix}nom
+│⭔ ${prefix}slap
+│⭔ ${prefix}waifu
+│⭔ ${prefix}smile
+│⭔ ${prefix}wave
+│⭔ ${prefix}awoo
+│⭔ ${prefix}blush
+│⭔ ${prefix}smug
+│⭔ ${prefix}glomp
+│⭔ ${prefix}happy
+│⭔ ${prefix}dance
+│⭔ ${prefix}cringe
+│⭔ ${prefix}cuddle
+│⭔ ${prefix}highfive
+│⭔ ${prefix}shinobu
+│⭔ ${prefix}megumin
+│⭔ ${prefix}handhold
 │
 └───────⭓
 ┌──⭓ *Image Menu*
@@ -2307,11 +2637,12 @@ anu = `
 ┌──⭓ *Group Menu*
 │
 │⭔ ${prefix}linkgroup
-│⭔ ${prefix}ephemeral [option]
+│⭔ ${prefix}ephemeral
 │⭔ ${prefix}setpp
+│⭔ ${prefix}afk [alasan]
 │⭔ ${prefix}setname [text]
-│⭔ ${prefix}group [option]
-│⭔ ${prefix}editinfo [option]
+│⭔ ${prefix}group
+│⭔ ${prefix}editinfo
 │⭔ ${prefix}hidetag [text]
 │⭔ ${prefix}tagall [text]
 │⭔ ${prefix}add @user
@@ -2377,7 +2708,10 @@ anu = `
                                     await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
                                 }
 break
+
+//MENU
 case 'list': case 'menu': case 'help': case '?': {
+	m.reply(mess.waitcovid)
     covid = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
     covidworld_positif = await fetchJson(`https://api.kawalcorona.com/positif`)
     covidworld_meninggal = await fetchJson(`https://api.kawalcorona.com/meninggal`)
@@ -2448,6 +2782,8 @@ templateMessage: {
                     await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
                 }
             break
+//END MENU
+
             default:
                 if (budy.startsWith('=>')) {
                     if (!isCreator) return m.reply(mess.owner)
