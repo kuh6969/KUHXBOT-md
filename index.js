@@ -76,16 +76,43 @@ async function startHisoka() {
                 }
 
                 if (anu.action == 'add') {
-                    hisoka.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Welcome To ${metadata.subject} @${num.split("@")[0]}` })
-                } else if (anu.action == 'remove') {
-                    hisoka.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `@${num.split("@")[0]} Leaving To ${metadata.subject}` })
-                }
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    })
-	
+                    const templateButtons = [
+                        {index: 1, urlButton: {displayText: 'Website', url: 'https://ramadhankukuh.github.io'}},
+                        {index: 2, urlButton: {displayText: 'YouTube', url: 'https://youtube.com/c/KukuhRamadhann'}},
+                        {index: 3, quickReplyButton: {displayText: 'WELCOME', id: '.menu'}},
+                      ]
+                      
+                      const buttonMessage = {
+                          text: `Welcome To ${metadata.subject} @${num.split("@")[0]}`,
+                          footer: '@ramadhankukuh',
+                          templateButtons: templateButtons,
+                          image: {url: ppuser}
+                      }
+                      
+                      hisoka.sendMessage(anu.id, buttonMessage)
+                  
+                  } else if (anu.action == 'remove') {
+                    const templateButtons = [
+                        {index: 1, urlButton: {displayText: 'Website', url: 'https://ramadhankukuh.github.io'}},
+                        {index: 2, urlButton: {displayText: 'YouTube', url: 'https://youtube.com/c/KukuhRamadhann'}},
+                        {index: 3, quickReplyButton: {displayText: 'NITIP GORENGAN', id: '.menu'}},
+                      ]
+                      
+                      const buttonMessage = {
+                          text: `Kok Keluar, Mental Aman?\n@${num.split("@")[0]} Leaving To ${metadata.subject}`,
+                          footer: '@ramadhankukuh',
+                          templateButtons: templateButtons,
+                          image: {url: ppuser}
+                      }
+                      
+                      hisoka.sendMessage(anu.id, buttonMessage)
+                  }
+                  }
+                  } catch (err) {
+                  console.log(err)
+                  }
+                  })
+
     // Setting
     hisoka.decodeJid = (jid) => {
         if (!jid) return jid
