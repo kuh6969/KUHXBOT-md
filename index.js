@@ -79,7 +79,7 @@ async function startHisoka() {
                     const templateButtons = [
                         {index: 1, urlButton: {displayText: 'Website', url: 'https://ramadhankukuh.github.io'}},
                         {index: 2, urlButton: {displayText: 'YouTube', url: 'https://youtube.com/c/KukuhRamadhann'}},
-                        {index: 3, quickReplyButton: {displayText: 'WELCOME', id: '.menu'}},
+                        {index: 3, quickReplyButton: {displayText: 'WELCOME ☭', id: '.menu'}},
                       ]
                       
                       const buttonMessage = {
@@ -95,7 +95,7 @@ async function startHisoka() {
                     const templateButtons = [
                         {index: 1, urlButton: {displayText: 'Website', url: 'https://ramadhankukuh.github.io'}},
                         {index: 2, urlButton: {displayText: 'YouTube', url: 'https://youtube.com/c/KukuhRamadhann'}},
-                        {index: 3, quickReplyButton: {displayText: 'NITIP GORENGAN', id: '.menu'}},
+                        {index: 3, quickReplyButton: {displayText: 'NITIP GORENGAN BANH ☭', id: '.menu'}},
                       ]
                       
                       const buttonMessage = {
