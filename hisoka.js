@@ -37,6 +37,7 @@ let kuismath = game.math = []
 let tebakgambar = game.tebakgambar = []
 let tebakkata = game.tebakkata = []
 let caklontong = game.lontong = []
+let caklontong_desk = game.lontong_desk = []
 let tebakkalimat = game.kalimat = []
 let tebaklirik = game.lirik = []
 let tebaktebakan = game.tebakan = []
@@ -56,7 +57,7 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
         const command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase()
         const args = body.trim().split(/ +/).slice(1)
         const pushname = m.pushName || "No Name"
-        const botNumber = hisoka.user.id ? hisoka.user.id.split(":")[0]+"@s.whatsapp.net" : hisoka.user.id
+        const botNumber = await hisoka.decodeJid(hisoka.user.id)
         const isCreator = [botNumber, ...global.owner].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
         const itsMe = m.sender == botNumber ? true : false
         const text = q = args.join(" ")
@@ -68,8 +69,11 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
         const createSerial = (size) => {
             return crypto.randomBytes(size).toString('hex').slice(0, size)
             }
+            username = '@ramadhankukuh'
             const copidindo = await covidindo()
             const copidworld = await corona()
+            
+            //Waktu
         const salam = moment().tz('Asia/Jakarta').format('HH:mm:ss')
 if(salam < "23:59:00"){
 var sayingtime = 'Selamat Malam'
@@ -94,40 +98,12 @@ var sayingtime = 'Selamat Malam'
         const groupMetadata = m.isGroup ? await hisoka.groupMetadata(m.chat).catch(e => {}) : ''
         const groupName = m.isGroup ? groupMetadata.subject : ''
         const participants = m.isGroup ? await groupMetadata.participants : ''
-        const groupAdmins = m.isGroup ? await getGroupAdmins(participants) : ''
+        const groupAdmins = m.isGroup ? await participants.filter(v => v.admin !== null).map(v => v.id) : ''
         const groupOwner = m.isGroup ? groupMetadata.owner : ''
     	const isBotAdmins = m.isGroup ? groupAdmins.includes(botNumber) : false
-        const isGroupOwner = m.isGroup ? groupOwner.includes(m.sender) : false
-        const isGroupAdmins = m.isGroup ? groupAdmins.includes(m.sender) : false
+        const isAdmins = m.isGroup ? groupAdmins.includes(m.sender) : false
         const isNumber = x => typeof x === 'number' && !isNaN(x)
         const mentionUser = [...new Set([...(m.mentionedJid || []), ...(m.quoted ? [m.quoted.sender] : [])])]
-
-        // Bot Status
-        const used = process.memoryUsage()
-        const cpus = os.cpus().map(cpu => {
-            cpu.total = Object.keys(cpu.times).reduce((last, type) => last + cpu.times[type], 0)
-			return cpu
-        })
-        const cpu = cpus.reduce((last, cpu, _, { length }) => {
-            last.total += cpu.total
-			last.speed += cpu.speed / length
-			last.times.user += cpu.times.user
-			last.times.nice += cpu.times.nice
-			last.times.sys += cpu.times.sys
-			last.times.idle += cpu.times.idle
-			last.times.irq += cpu.times.irq
-			return last
-        }, {
-            speed: 0,
-			total: 0,
-			times: {
-			    user: 0,
-			    nice: 0,
-			    sys: 0,
-			    idle: 0,
-			    irq: 0
-            }
-        })
 
         // Public & Self
         if (!hisoka.public) {
@@ -136,7 +112,7 @@ var sayingtime = 'Selamat Malam'
 
         // Push Message To Console && Auto Read
         if (m.message) {
-        hisoka.sendReadReceipt(m.chat, m.sender, [m.key.id])
+            hisoka.sendReadReceipt(m.chat, m.sender, [m.key.id])
             console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> Dari'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> Di'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
         }
         
@@ -255,7 +231,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebaklagu[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-           await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
+           await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `🎮 Tebak Lagu 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, username, m)
                 delete tebaklagu[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -273,7 +249,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebakgambar[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `🎮 Tebak Gambar 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, username, m)
                 delete tebakgambar[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -282,7 +258,7 @@ ${Array.from(room.jawaban, (jawaban, index) => {
             kuis = true
             jawaban = tebakkata[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
+await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `🎮 Tebak Kata 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, username, m)
                 delete tebakkata[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -291,7 +267,7 @@ await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { dis
             kuis = true
             jawaban = tebaklogo[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak logo', buttonText: { displayText: 'Tebak Logo' }, type: 1 }], `🎮 Tebak Logo 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak logo', buttonText: { displayText: 'Tebak Logo' }, type: 1 }], `🎮 Tebak Logo 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, username, m)
                 delete tebaklogo[m.sender.split('@')[0]]
             } else m.reply('Jawaban Salah!')
         }
@@ -299,8 +275,9 @@ await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { dis
         if (caklontong.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
             kuis = true
             jawaban = caklontong[m.sender.split('@')[0]]
+            deskripsi = caklontong_desk[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `🎮 Cak Lontong 🎮\n\nJawaban Benar 🎉\n*${deskripsi}*\n\nIngin bermain lagi? tekan button dibawah`, username, m)
                 delete caklontong[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -309,7 +286,7 @@ await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { dis
             kuis = true
             jawaban = tebakkalimat[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `🎮 Tebak Kalimat 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, username, m)
                 delete tebakkalimat[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -318,7 +295,7 @@ await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { dis
             kuis = true
             jawaban = tebaklirik[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `🎮 Tebak Lirik 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, username, m)
                 delete tebaklirik[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -327,7 +304,7 @@ await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { dis
             kuis = true
             jawaban = tebaktebakan[m.sender.split('@')[0]]
             if (budy.toLowerCase() == jawaban) {
-                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak tebakan', buttonText: { displayText: 'Tebak Tebakan' }, type: 1 }], `🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, '@ramadhankukuh', m)
+                await hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak tebakan', buttonText: { displayText: 'Tebak Tebakan' }, type: 1 }], `🎮 Tebak Tebakan 🎮\n\nJawaban Benar 🎉\n\nIngin bermain lagi? tekan button dibawah`, username, m)
                 delete tebaktebakan[m.sender.split('@')[0]]
             } else m.reply('*Jawaban Salah!*')
         }
@@ -525,12 +502,13 @@ Ketik *nyerah* untuk menyerah dan mengakui kekalahan`
             }
             }
             break
-            case 'suitpvp': case 'suit': {
+case 'suitpvp': case 'suit': {
             this.suit = this.suit ? this.suit : {}
             let poin = 10
             let poin_lose = 10
             let timeout = 60000
             if (Object.values(this.suit).find(roof => roof.id.startsWith('suit') && [roof.p, roof.p2].includes(m.sender))) m.reply(`Selesaikan suit mu yang sebelumnya`)
+	    if (m.mentionedJid[0] === m.sender) return m.reply(`Tidak bisa bermain dengan diri sendiri !`)
             if (!m.mentionedJid[0]) return m.reply(`_Siapa yang ingin kamu tantang?_\nTag orangnya..\n\nContoh : ${prefix}suit @${owner[1]}`, m.chat, { mentions: [owner[1] + '@s.whatsapp.net'] })
             if (Object.values(this.suit).find(roof => roof.id.startsWith('suit') && [roof.p, roof.p2].includes(m.mentionedJid[0]))) throw `Orang yang kamu tantang sedang bermain suit bersama orang lain :(`
             let id = 'suit_' + new Date() * 1
@@ -615,7 +593,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                     await sleep(60000)
                     if (tebaklagu.hasOwnProperty(m.sender.split('@')[0])) {
                     console.log("Jawaban: " + result.jawaban)
-                    m.reply(`Waktu Habis\nJawaban:  ${result.jawaban}\n\nIngin bermain? kirim ${prefix + command} lagu`)
+                    hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lagu', buttonText: { displayText: 'Tebak Lagu' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebaklagu[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, username, m)
                     delete tebaklagu[m.sender.split('@')[0]]
                     }
                 } else if (args[0] === 'gambar') {
@@ -628,7 +606,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                     await sleep(60000)
                     if (tebakgambar.hasOwnProperty(m.sender.split('@')[0])) {
                     console.log("Jawaban: " + result.jawaban)
-                    m.reply(`Waktu Habis\nJawaban:  ${result.jawaban}\n\nIngin bermain? kirim ${prefix + command} gambar`)
+                    hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak gambar', buttonText: { displayText: 'Tebak Gambar' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakgambar[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, username, m)
                     delete tebakgambar[m.sender.split('@')[0]]
                     }
                 } else if (args[0] === 'kata') {
@@ -641,7 +619,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                     await sleep(60000)
                     if (tebakkata.hasOwnProperty(m.sender.split('@')[0])) {
                     console.log("Jawaban: " + result.jawaban)
-                    m.reply(`Waktu Habis\nJawaban:  ${result.jawaban}\n\nIngin bermain? kirim ${prefix + command} kata`)
+                    hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kata', buttonText: { displayText: 'Tebak Kata' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakkata[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, username, m)
                     delete tebakkata[m.sender.split('@')[0]]
                     }
                 } else if (args[0] === 'logo') {
@@ -654,7 +632,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                     await sleep(60000)
                     if (tebaklogo.hasOwnProperty(m.sender.split('@')[0])) {
                     console.log("Jawaban: " + result.jawaban)
-                    m.reply(`Waktu Habis\nJawaban:  ${result.jawaban}\n\nIngin bermain? kirim ${prefix + command} gambar`)
+                    hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak logo', buttonText: { displayText: 'Tebak Logo' }, type: 1 }], `Waktu Habis\nJawaban: ${tebaklogo[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, username, m)
                     delete tebaklogo[m.sender.split('@')[0]]
                     }
                 } else if (args[0] === 'kalimat') {
@@ -667,7 +645,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                     await sleep(60000)
                     if (tebakkalimat.hasOwnProperty(m.sender.split('@')[0])) {
                     console.log("Jawaban: " + result.jawaban)
-                    m.reply(`Waktu Habis\nJawaban:  ${result.jawaban}\n\nIngin bermain? kirim ${prefix + command} kalimat`)
+                    hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak kalimat', buttonText: { displayText: 'Tebak Kalimat' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebakkalimat[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, username, m)
                     delete tebakkalimat[m.sender.split('@')[0]]
                     }
                 } else if (args[0] === 'lirik') {
@@ -680,7 +658,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                     await sleep(60000)
                     if (tebaklirik.hasOwnProperty(m.sender.split('@')[0])) {
                     console.log("Jawaban: " + result.jawaban)
-                    m.reply(`Waktu Habis\nJawaban:  ${result.jawaban}\n\nIngin bermain? kirim ${prefix + command} lirik`)
+                    hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lirik', buttonText: { displayText: 'Tebak Lirik' }, type: 1 }], `Waktu Habis\nJawaban:  ${tebaklirik[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, username, m)
                     delete tebaklirik[m.sender.split('@')[0]]
                     }
                 } else if (args[0] === 'lontong') {
@@ -689,12 +667,14 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                     let result = anu[Math.floor(Math.random() * anu.length)]
                     hisoka.sendText(m.chat, `*Jawablah Pertanyaan Berikut :*\n${result.soal}*\nWaktu : 60s`, m).then(() => {
                     caklontong[m.sender.split('@')[0]] = result.jawaban.toLowerCase()
+                    caklontong_desk[m.sender.split('@')[0]] = result.deskripsi
                     })
                     await sleep(60000)
                     if (caklontong.hasOwnProperty(m.sender.split('@')[0])) {
                     console.log("Jawaban: " + result.jawaban)
-                    m.reply(`Waktu Habis\nJawaban:  ${result.jawaban}\nDeskripsi : ${result.deskripsi}\n\nIngin bermain? kirim ${prefix + command} kalimat`)
+                    hisoka.sendButtonText(m.chat, [{ buttonId: 'tebak lontong', buttonText: { displayText: 'Tebak Lontong' }, type: 1 }], `Waktu Habis\nJawaban:  ${caklontong[m.sender.split('@')[0]]}\nDeskripsi : ${caklontong_desk[m.sender.split('@')[0]]}\n\nIngin bermain? tekan button dibawah`, username, m)
                     delete caklontong[m.sender.split('@')[0]]
+                    delete caklontong_desk[m.sender.split('@')[0]]
                     }
                 }
             }
@@ -710,7 +690,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                 await sleep(result.waktu)
                 if (kuismath.hasOwnProperty(m.sender.split('@')[0])) {
                     console.log("Jawaban: " + result.jawaban)
-                    m.reply("Waktu Habis\nJawaban: " + result.jawaban)
+                    m.reply("Waktu Habis\nJawaban: " + kuismath[m.sender.split('@')[0]])
                     delete kuismath[m.sender.split('@')[0]]
                 }
             }
@@ -726,7 +706,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
             let buttons = [
                         { buttonId: 'jodohku', buttonText: { displayText: 'Jodohku' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(m.chat, buttons, jawab, '@ramadhankukuh', m, {mentions: ments})
+                    await hisoka.sendButtonText(m.chat, buttons, jawab, username, m, {mentions: ments})
             }
             break
             case 'jadian': {
@@ -740,7 +720,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
             let buttons = [
                         { buttonId: 'jadian', buttonText: { displayText: 'Jodohku' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(m.chat, buttons, jawab, '@ramadhankukuh', m, {mentions: ments})
+                    await hisoka.sendButtonText(m.chat, buttons, jawab, username, m, {mentions: ments})
             }
             break
             case 'join': {
@@ -760,7 +740,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 	case 'kick': {
 		if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'remove').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
@@ -768,7 +748,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 	case 'add': {
 		if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
 		let users = m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'add').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
@@ -776,7 +756,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 	case 'promote': {
 		if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'promote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
@@ -784,7 +764,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 	case 'demote': {
 		if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'demote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
@@ -812,7 +792,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 	    case 'setname': case 'setsubject': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
                 if (!text) throw 'Text ?'
                 await hisoka.groupUpdateSubject(m.chat, text).then((res) => m.reply(mess.success)).catch((err) => m.reply(jsonformat(err)))
             }
@@ -820,25 +800,32 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
           case 'setdesc': case 'setdesk': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
                 if (!text) throw 'Text ?'
                 await hisoka.groupUpdateDescription(m.chat, text).then((res) => m.reply(mess.success)).catch((err) => m.reply(jsonformat(err)))
             }
             break
-            case 'setprofile': case 'setpp': {
+          case 'setppbot': {
                 if (!isCreator) throw mess.owner
-                if (!quoted) throw 'Reply Image'
-                if (/image/.test(mime)) throw `balas image dengan caption *${prefix + command}*`
+                if (!quoted) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+                if (!/image/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+                if (/webp/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
                 let media = await hisoka.downloadAndSaveMediaMessage(quoted)
-                if (!m.isGroup && !isBotAdmins && !isGroupAdmins && !isGroupOwner) {
-                    await hisoka.updateProfilePicture(m.chat, { url: media }).catch((err) => fs.unlinkSync(media))
-		    await fs.unlinkSync(media)
-                } else if (!isCreator) {
-                    await hisoka.updateProfilePicture(hisoka.user.id, { url: media }).catch((err) => fs.unlinkSync(media))
-		    await fs.unlinkSync(media)
+                await hisoka.updateProfilePicture(botNumber, { url: media }).catch((err) => fs.unlinkSync(media))
+                m.reply(mess.success)
                 }
-            }
-            break
+                break
+           case 'setppgroup': case 'setppgrup': case 'setppgc': {
+                if (!m.isGroup) throw mess.group
+                if (!isAdmins) throw mess.admin
+                if (!quoted) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+                if (!/image/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+                if (/webp/.test(mime)) throw `Kirim/Reply Image Dengan Caption ${prefix + command}`
+                let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+                await hisoka.updateProfilePicture(m.chat, { url: media }).catch((err) => fs.unlinkSync(media))
+                m.reply(mess.success)
+                }
+                break
             case 'vote': {
                 if (!m.isGroup) throw mess.group
                 if (m.chat in vote) throw `_Masih ada vote di chat ini!_\n\n*${prefix}hapusvote* - untuk menghapus vote`
@@ -862,15 +849,15 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
     │
     │ 
     └────
-    *${prefix}hapusvote* - untuk menghapus vote`
+    Ketik *${prefix}hapusvote* - untuk menghapus vote`
     let buttonsVote = [
-      {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1},
-      {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1}
+      {buttonId: `${prefix}upvote`, buttonText: {displayText: 'UPVOTE'}, type: 1},
+      {buttonId: `${prefix}devote`, buttonText: {displayText: 'DEVOTE'}, type: 1}
     ]
     
                 let buttonMessageVote = {
                     text: teks_vote,
-                    footer: '@ramadhankukuh',
+                    footer: username,
                     buttons: buttonsVote,
                     headerType: 1
                 }
@@ -899,7 +886,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
     ${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
     │ 
     └────
-    *${prefix}hapusvote* - untuk menghapus vote`
+    Ketik *${prefix}hapusvote* - untuk menghapus vote`
                 let buttonsUpvote = [
                   {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1},
                   {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1} //𝚄𝙿𝚅𝙾𝚃𝙴 𝙳𝙴𝚅𝙾𝚃𝙴
@@ -907,7 +894,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
     
                 let buttonMessageUpvote = {
                     text: teks_vote,
-                    footer: '@ramadhankukuh',
+                    footer: username,
                     buttons: buttonsUpvote,
                     headerType: 1,
                     mentions: menvote
@@ -937,7 +924,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
     ${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
     │ 
     └────
-    *${prefix}hapusvote* - untuk menghapus vote`
+    Ketik *${prefix}hapusvote* - untuk menghapus vote`
                 let buttonsDevote = [
                   {buttonId: `${prefix}upvote`, buttonText: {displayText: '𝚄𝙿𝚅𝙾𝚃𝙴'}, type: 1},
                   {buttonId: `${prefix}devote`, buttonText: {displayText: '𝙳𝙴𝚅𝙾𝚃𝙴'}, type: 1} //𝚄𝙿𝚅𝙾𝚃𝙴 𝙳𝙴𝚅𝙾𝚃𝙴
@@ -945,7 +932,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
     
                 let buttonMessageDevote = {
                     text: teks_vote,
-                    footer: '@ramadhankukuh',
+                    footer: username,
                     buttons: buttonsDevote,
                     headerType: 1,
                     mentions: menvote
@@ -953,29 +940,28 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                 hisoka.sendMessage(m.chat, buttonMessageDevote)
         }
                 break
-                     case 'cekvote': {
-                if (!m.isGroup) throw mess.group
-                if (!(m.chat in vote)) throw `_*tidak ada voting digrup ini!*_\n\n*${prefix}vote* - untuk memulai vote`
-                [reason, upvote, devote] = vote[m.chat]
-                mentionedJid = [...upvote, ...devote]
-                teks_vote = `*「 VOTE 」*
-    *Alasan:* ${reason}
+case 'cekvote':
+if (!m.isGroup) throw mess.group
+if (!(m.chat in vote)) throw `_*tidak ada voting digrup ini!*_\n\n*${prefix}vote* - untuk memulai vote`
+teks_vote = `*「 VOTE 」*
+    *Alasan:* ${vote[m.chat][0]}
     ┌〔 UPVOTE 〕
     │ 
     ├ Total: ${upvote.length}
-    ${upvote.map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
+    ${vote[m.chat][1].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
     │ 
     └────
     ┌〔 DEVOTE 〕
     │ 
     ├ Total: ${devote.length}
-    ${devote.map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
+    ${vote[m.chat][2].map((v, i) => `├ ${i + 1}. @${v.split`@`[0]}`).join('\n')}
     │ 
     └────
-    *${prefix}hapusvote* - untuk menghapus vote`
-                hisoka.sendTextWithMentions(m.chat, teks_vote, m)
-        }
-                break
+    Ketik *${prefix}hapusvote* - untuk menghapus vote
+${username}
+`
+hisoka.sendTextWithMentions(m.chat, teks_vote, m)
+break
                   case 'hapusvote': {
                 if (!m.isGroup) throw mess.group
                 if (!(m.chat in vote)) throw `_*tidak ada voting digrup ini!*_\n\n*${prefix}vote* - untuk memulai vote`
@@ -986,7 +972,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
             case 'group': case 'grup': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
                 if (args[0] === 'close'){
                     await hisoka.groupSettingUpdate(m.chat, 'announcement').then((res) => m.reply(`Sukses Menutup Group`)).catch((err) => m.reply(jsonformat(err)))
                 } else if (args[0] === 'open'){
@@ -996,14 +982,14 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                         { buttonId: 'group open', buttonText: { displayText: 'Open' }, type: 1 },
                         { buttonId: 'group close', buttonText: { displayText: 'Close' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(m.chat, buttons, `Mode Group`, '@ramadhankukuh', m)
+                    await hisoka.sendButtonText(m.chat, buttons, `Mode Group`, username, m)
              }
             }
             break
             case 'editinfo': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
              if (args[0] === 'open'){
                 await hisoka.groupSettingUpdate(m.chat, 'unlocked').then((res) => m.reply(`Sukses Membuka Edit Info Group`)).catch((err) => m.reply(jsonformat(err)))
              } else if (args[0] === 'close'){
@@ -1013,7 +999,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                         { buttonId: 'editinfo open', buttonText: { displayText: 'Open' }, type: 1 },
                         { buttonId: 'editinfo close', buttonText: { displayText: 'Close' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(m.chat, buttons, `Mode Edit Info`, '@ramadhankukuh', m)
+                    await hisoka.sendButtonText(m.chat, buttons, `Mode Edit Info`, username, m)
             }
             }
             break
@@ -1026,7 +1012,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
             case 'ephemeral': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
                 if (!text) throw 'Masukkan value enable/disable'
                 if (args[0] === 'enable') {
                     await hisoka.sendMessage(m.chat, { disappearingMessagesInChat: WA_DEFAULT_EPHEMERAL }).then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
@@ -1038,7 +1024,7 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
             case 'tagall': {
                 if (!m.isGroup) throw mess.group
                 if (!isBotAdmins) throw mess.botAdmin
-                if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+                if (!isAdmins) throw mess.admin
 let teks = `══✪〘 *👥 Tag All* 〙✪══
  
  ➲ *Pesan : ${q ? q : 'kosong'}*\n\n`
@@ -1051,7 +1037,7 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
                 case 'hidetag': {
             if (!m.isGroup) throw mess.group
             if (!isBotAdmins) throw mess.botAdmin
-            if (!isGroupAdmins && !isGroupOwner) throw mess.admin
+            if (!isAdmins) throw mess.admin
             hisoka.sendMessage(m.chat, { text : q ? q : '' , mentions: participants.map(a => a.id)}, { quoted: m })
             }
             break
@@ -1333,6 +1319,46 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
         })
         }
         break
+            case 'umma': case 'ummadl': {
+	        if (!text) throw `Example : ${prefix + command} https://umma.id/channel/video/post/gus-arafat-sumber-kecewa-84464612933698`
+                let { umma } = require('./lib) scraper')
+		let anu = await umma(isUrl(text)[0])
+		if (anu.type == 'video') {
+		    let buttons = [
+                        {buttonId: `ytmp3 ${anu.media[0]} 128kbps`, buttonText: {displayText: '♫ Audio'}, type: 1},
+                        {buttonId: `ytmp4 ${anu.media[0]} 360p`, buttonText: {displayText: '► Video'}, type: 1}
+                    ]
+		    let buttonMessage = {
+		        image: { url: anu.author.profilePic },
+			caption: `
+⭔ Title : ${anu.title}
+⭔ Author : ${anu.author.name}
+⭔ Like : ${anu.like}
+⭔ Caption : ${anu.caption}
+⭔ Url : ${anu.media[0]}
+Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan command ytmp3/ytmp4 dengan url diatas
+`,
+			footer: username,
+			buttons,
+			headerType: 4
+		    }
+		    hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
+                    db.data.users[m.sender].limit -= 1
+		} else if (anu.type == 'image') {
+		    anu.media.map(async (url) => {
+		        hisoka.sendMessage(m.chat, { image: { url }, caption: `⭔ Title : ${anu.title}\n⭔ Author : ${anu.author.name}\n⭔ Like : ${anu.like}\n⭔ Caption : ${anu.caption}` }, { quoted: m })
+		    })
+		}
+	    }
+	    break
+            case 'ringtone': {
+		if (!text) throw `Example : ${prefix + command} black rover`
+                let { ringtone } = require('./lib/scraper')
+		let anu = await ringtone(text)
+		let result = anu[Math.floor(Math.random() * anu.length)]
+		hisoka.sendMessage(m.chat, { audio: { url: result.audio }, fileName: result.title+'.mp3', mimetype: 'audio/mpeg' }, { quoted: m })
+	    }
+	    break
 	    case 'play': case 'ytplay': {
                 if (!text) throw `Example : ${prefix + command} story wa anime`
                 let yts = require("yt-search")
@@ -1355,7 +1381,7 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
 ⭔ Channel : ${anu.author.url}
 ⭔ Description : ${anu.description}
 ⭔ Url : ${anu.url}`,
-                    footer: 'Kukuh',
+                    footer: username,
                     buttons: buttons,
                     headerType: 4
                 }
@@ -1786,7 +1812,7 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
 	        case 'tiktok': case 'tiktoknowm': case 'ttnowm': {
                 if (!text) throw 'Masukkan Query Link!'
                 m.reply(mess.wait)
-                let { Tiktokdl } = require('./lib/tiktok')
+                let { Tiktokdl } = require('./lib/gif')
                 let result = await Tiktokdl(isUrl(text)[0])
                 let buttons = [
                     {buttonId: `tiktokwm ${text}`, buttonText: {displayText: '► With Watermark'}, type: 1},
@@ -1805,7 +1831,7 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
             case 'tiktokwm': case 'tiktokwatermark': case 'ttwm': {
                 if (!text) throw 'Masukkan Query Link!'
                 m.reply(mess.wait)
-                let { Tiktokdl } = require('./lib/tiktok')
+                let { Tiktokdl } = require('./lib/gif')
                 let result = await Tiktokdl(isUrl(text)[0])
                 let buttons = [
                     {buttonId: `tiktoknowm ${text}`, buttonText: {displayText: '► No Watermark'}, type: 1},
@@ -1824,7 +1850,7 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
             case 'tiktokmp3': case 'tiktokaudio': {
                 if (!text) throw 'Masukkan Query Link!'
                 m.reply(mess.wait)
-                let { Tiktokdl } = require('./lib/tiktok')
+                let { Tiktokdl } = require('./lib/gif')
                 let result = await Tiktokdl(isUrl(text)[0])
                 let buttons = [
                     {buttonId: `tiktoknowm ${text}`, buttonText: {displayText: '► No Watermark'}, type: 1},
@@ -1843,8 +1869,9 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
 	        case 'igdl': case 'ig': case 'instagram': {
                 if (!text) throw 'Masukkan Query Link!'
                 m.reply(mess.wait)
-                let anu = await fetchJson(api('zenz', '/api/downloader/instagram2', { url: text }, 'apikey'))
-                hisoka.sendMessage(m.chat, { video: { url: anu.data[0] }, caption: `Download From ${text}` }, { quoted: m})
+                let { igdl } = require ('./lib/gif')
+                let result = await igdl((`${text}`))
+                hisoka.sendMessage(m.chat, { video: { url: result.result.link }, caption: `Deskripsi ${result.result.desc}` }, { quoted: m})
             } 
             break
             case 'igdltv': case 'igreels': case 'igdl2': {
@@ -2025,13 +2052,13 @@ her = `*Hero Details ${body.slice(12)}*
 *Story* : ${res.background_story}`
 m.reply(her)
 break
-	    case 'anonymous': {
+	case 'anonymous': {
                 if (m.isGroup) return m.reply('Fitur Tidak Dapat Digunakan Untuk Group!')
 				this.anonymous = this.anonymous ? this.anonymous : {}
 				let buttons = [
                     { buttonId: 'start', buttonText: { displayText: 'Start' }, type: 1 }
                 ]
-                hisoka.sendButtonText(m.chat, buttons, `\`\`\`Hi ${await hisoka.getName(m.sender)} Welcome To Anonymous Chat\n\nKlik Button Dibawah Ini Untuk Mencari Partner\`\`\``, hisoka.user.name, m)
+                hisoka.sendButtonText(m.chat, buttons, `\`\`\`Hi ${await hisoka.getName(m.sender)} Welcome To Anonymous Chat\n\nKlik Button Dibawah Ini Untuk Mencari Partner\`\`\``, username, m)
             }
 			break
             case 'keluar': case 'leave': {
@@ -2075,7 +2102,7 @@ break
                     let buttons = [
                         { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Kamu Masih Berada Di dalam Sesi Anonymous, Tekan Button Dibawah Ini Untuk Menghentikan Sesi Anonymous Anda\`\`\``, hisoka.user.name, m)
+                    await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Kamu Masih Berada Di dalam Sesi Anonymous, Tekan Button Dibawah Ini Untuk Menghentikan Sesi Anonymous Anda\`\`\``, username, m)
                     throw false
                 }
                 let room = Object.values(this.anonymous).find(room => room.state === 'WAITING' && !room.check(m.sender))
@@ -2084,10 +2111,10 @@ break
                         { buttonId: 'next', buttonText: { displayText: 'Skip' }, type: 1 },
                         { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, hisoka.user.name, m)
+                    await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, username, m)
                     room.b = m.sender
                     room.state = 'CHATTING'
-                    await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, hisoka.user.name, m)
+                    await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, username, m)
                 } else {
                     let id = + new Date
                     this.anonymous[id] = {
@@ -2105,7 +2132,7 @@ break
                     let buttons = [
                         { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, hisoka.user.name, m)
+                    await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, username, m)
                 }
                 break
             }
@@ -2129,10 +2156,10 @@ break
                         { buttonId: 'next', buttonText: { displayText: 'Skip' }, type: 1 },
                         { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, hisoka.user.name, m)
+                    await hisoka.sendButtonText(room.a, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, username, m)
                     room.b = m.sender
                     room.state = 'CHATTING'
-                    await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, hisoka.user.name, m)
+                    await hisoka.sendButtonText(room.b, buttons, `\`\`\`Berhasil Menemukan Partner, sekarang kamu dapat mengirim pesan\`\`\``, username, m)
                 } else {
                     let id = + new Date
                     this.anonymous[id] = {
@@ -2150,10 +2177,10 @@ break
                     let buttons = [
                         { buttonId: 'keluar', buttonText: { displayText: 'Stop' }, type: 1 }
                     ]
-                    await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, hisoka.user.name, m)
+                    await hisoka.sendButtonText(m.chat, buttons, `\`\`\`Mohon Tunggu Sedang Mencari Partner\`\`\``, username, m)
                 }
-                break
             }
+                break
             case 'public': {
                 if (!isCreator) throw mess.owner
                 hisoka.public = true
@@ -2167,6 +2194,31 @@ break
             }
             break
             case 'ping': case 'botstatus': case 'statusbot': {
+                const used = process.memoryUsage()
+                const cpus = os.cpus().map(cpu => {
+                    cpu.total = Object.keys(cpu.times).reduce((last, type) => last + cpu.times[type], 0)
+			        return cpu
+                })
+                const cpu = cpus.reduce((last, cpu, _, { length }) => {
+                    last.total += cpu.total
+                    last.speed += cpu.speed / length
+                    last.times.user += cpu.times.user
+                    last.times.nice += cpu.times.nice
+                    last.times.sys += cpu.times.sys
+                    last.times.idle += cpu.times.idle
+                    last.times.irq += cpu.times.irq
+                    return last
+                }, {
+                    speed: 0,
+                    total: 0,
+                    times: {
+			            user: 0,
+			            nice: 0,
+			            sys: 0,
+			            idle: 0,
+			            irq: 0
+                }
+                })
                 let timestamp = speed()
                 let latensi = speed() - timestamp
                 neww = performance.now()
@@ -2196,7 +2248,7 @@ case 'command': {
                     {
                     title: "Menu - 1",
                     rows: [
-                        {title: "Semua Perintah", rowId: "allmenu", description: "Menampilkan Semua Menu"}
+                        {title: "Semua Perintah", rowId: "allmenu", description: "Menampilkan Semua Menu ( Disarankan )"}
                     ]
                     },
                    {
@@ -2214,65 +2266,77 @@ case 'command': {
                    {
                     title: "Menu - 4",
                     rows: [
-                        {title: "Menu Group", rowId: "grubmenu", description: "Menampilkan Menu Group"}
+                        {title: "Menu Islam", rowId: "islammenu", description: "Menampilkan Menu Tentang Islam"}
                     ]
                     },
-                   {
+                    {
                     title: "Menu - 5",
                     rows: [
-                        {title: "Menu Searching", rowId: "searchmenu", description: "Menampilkan Menu Pencaharian"}
+                        {title: "Menu Lagu Sad / Gamon", rowId: "soundmenu", description: "Menampilkan Menu Lagu Yang Bikin Kamu Gamon"}
                     ]
                     },
                    {
                     title: "Menu - 6",
                     rows: [
-                        {title: "Menu Primbon", rowId: "primbonmenu", description: "Menampilkan Menu Primbon"}
+                        {title: "Menu Group", rowId: "grubmenu", description: "Menampilkan Menu Group"}
                     ]
                     },
                    {
                     title: "Menu - 7",
                     rows: [
-                        {title: "Menu Image", rowId: "imagemenu", description: "Menampilkan Menu Image"}
+                        {title: "Menu Searching", rowId: "searchmenu", description: "Menampilkan Menu Pencaharian"}
                     ]
                     },
-                                       {
+                   {
                     title: "Menu - 8",
                     rows: [
-                        {title: "Menu Fun", rowId: "funmenu", description: "Menampilkan Menu Fun"}
+                        {title: "Menu Primbon", rowId: "primbonmenu", description: "Menampilkan Menu Primbon"}
                     ]
                     },
                    {
                     title: "Menu - 9",
                     rows: [
-                        {title: "Menu Converter", rowId: "convertmenu", description: "Menampilkan Menu Converter Link / Musik / Gambar Ke Stiker"}
+                        {title: "Menu Wibu", rowId: "wibumenu", description: "Menampilkan Menu Para Wibu"}
                     ]
                     },
-                   {
+                    {
                     title: "Menu - 10",
                     rows: [
-                        {title: "Menu Random", rowId: "randommenu", description: "Menampilkan Menu Random"}
+                        {title: "Menu Image", rowId: "imagemenu", description: "Menampilkan Menu Image"}
                     ]
                     },
-                   {
+                    {
                     title: "Menu - 11",
                     rows: [
-                        {title: "Menu Random Anime", rowId: "ranomanimemenu", description: "Menampilkan Menu Random Anime"}
+                        {title: "Menu Fun", rowId: "funmenu", description: "Menampilkan Menu Fun"}
                     ]
                     },
                    {
                     title: "Menu - 12",
                     rows: [
-                        {title: "Menu Database", rowId: "databasemenu", description: "Menampilkan Menu Database BOT"}
+                        {title: "Menu Converter", rowId: "convertmenu", description: "Menampilkan Menu Converter Link / Musik / Gambar Ke Stiker"}
                     ]
                     },
                    {
                     title: "Menu - 13",
                     rows: [
-                        {title: "Menu Other", rowId: "othermenu", description: "Menampilkan Menu Lainnya"}
+                        {title: "Menu Random", rowId: "randommenu", description: "Menampilkan Menu Random"}
                     ]
                     },
                    {
                     title: "Menu - 14",
+                    rows: [
+                        {title: "Menu Database", rowId: "databasemenu", description: "Menampilkan Menu Database BOT"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 15",
+                    rows: [
+                        {title: "Menu Other", rowId: "othermenu", description: "Menampilkan Menu Lainnya"}
+                    ]
+                    },
+                   {
+                    title: "Menu - 16",
                     rows: [
                         {title: "Menu Owner", rowId: "ownermenu", description: "Menampilkan Menu Khusus Owner BOT"}
                     ]
@@ -2611,6 +2675,7 @@ anu = `
 │⭔ ${prefix}sendkontak
 │
 └───────⭓
+
 ┌──⭓ *Downloader Menu*
 │
 │⭔ ${prefix}tiktoknowm [url]
@@ -2630,6 +2695,7 @@ anu = `
 │⭔ ${prefix}getvideo [query]
 │
 └───────⭓
+
 ┌──⭓ *Search Menu*
 │
 │⭔ ${prefix}play [query]
@@ -2642,11 +2708,11 @@ anu = `
 │⭔ ${prefix}ytsearch [query]
 │
 └───────⭓
+
 ┌──⭓ *Random Menu*
 │
 │⭔ ${prefix}coffe
 │⭔ ${prefix}porno
-│⭔ ${prefix}hentai
 │⭔ ${prefix}quotesanime
 │⭔ ${prefix}motivasi
 │⭔ ${prefix}dilanquote
@@ -2655,7 +2721,22 @@ anu = `
 │⭔ ${prefix}puisi
 │
 └───────⭓
-┌──⭓ *Random Anime Menu*
+
+┌──⭓ Islam Menu
+│
+│⭔ ${prefix}ummi  <url>
+│⭔ ${prefix}kisahnabi  <nabi> [ERROR]
+│⭔ ${prefix}jadwalsholat  <daerah> [ERROR]
+│
+└───────⭓
+
+┌──⭓ *Wibu Menu*
+│
+│⭔ ${prefix}hentai
+│⭔ ${prefix}anime  <query>[ERROR]
+│⭔ ${prefix}otakudesu  <query>[ERROR]
+│
+┌⭓ *Random Anime*
 │
 │⭔ ${prefix}cry
 │⭔ ${prefix}kill
@@ -2689,6 +2770,7 @@ anu = `
 │⭔ ${prefix}handhold
 │
 └───────⭓
+
 ┌──⭓ *Image Menu*
 │
 │⭔ ${prefix}anime
@@ -2699,6 +2781,7 @@ anu = `
 │⭔ ${prefix}megumin
 │
 └───────⭓
+
 ┌──⭓ *Fun Menu*
 │
 │⭔ ${prefix}halah
@@ -2713,6 +2796,7 @@ anu = `
 │⭔ ${prefix}math [mode]
 │
 └───────⭓
+
 ┌──⭓ *Primbon Menu*
 │
 │⭔ ${prefix}nomorhoki
@@ -2747,6 +2831,7 @@ anu = `
 │⭔ ${prefix}shio
 │
 └───────⭓
+
 ┌──⭓ *Convert Menu*
 │
 │⭔ ${prefix}toimage
@@ -2762,6 +2847,7 @@ anu = `
 │⭔ ${prefix}dbinary
 │
 └───────⭓
+
 ┌──⭓ *Main Menu*
 │
 │⭔ ${prefix}ping
@@ -2775,6 +2861,7 @@ anu = `
 │⭔ ${prefix}listonline
 │
 └───────⭓
+
 ┌──⭓ *Database Menu*
 │
 │⭔ ${prefix}setcmd
@@ -2787,6 +2874,7 @@ anu = `
 │⭔ ${prefix}delmsg
 │
 └───────⭓
+
 ┌──⭓ *Group Menu*
 │
 │⭔ ${prefix}linkgroup
@@ -2804,6 +2892,7 @@ anu = `
 │⭔ ${prefix}demote @user
 │
 └───────⭓
+
 ┌──⭓ *Owner Menu*
 │
 │⭔ ${prefix}chat [option]
@@ -2815,6 +2904,7 @@ anu = `
 │⭔ ${prefix}bcall
 │
 └───────⭓
+
 ┌──⭓ *Other Menu*
 │
 │⭔ ${prefix}herolist
@@ -2828,7 +2918,7 @@ anu = `
                         hydratedContentText: anu,
                             locationMessage: {
                                 jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                    hydratedFooterText: '@ramadhankukuh',
+                                    hydratedFooterText: username,
                                          hydratedButtons: [{
                                  urlButton: {
                                  displayText: 'Website Owner',
@@ -2884,7 +2974,7 @@ Time Server :
                             hydratedContentText: anu,
                                 locationMessage: {
                                     jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: '@ramadhankukuh',
+                                        hydratedFooterText: username,
                                              hydratedButtons: [{
                                      urlButton: {
                                      displayText: 'Website Owner',
@@ -2950,7 +3040,7 @@ Time Server :
                             hydratedContentText: anu,
                                 locationMessage: {
                                     jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: '@ramadhankukuh',
+                                        hydratedFooterText: username,
                                              hydratedButtons: [{
                                      urlButton: {
                                      displayText: 'Website Owner',
@@ -2983,6 +3073,106 @@ Time Server :
                                         await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
                                     }
     break
+
+    //MENU ISLAM
+case 'islammenu':{
+anu = `${sayingtime} ${pushname} 
+    
+Time Server :
+⭔ ${WaktuWib}
+    
+┌──⭓ Islam Menu
+│
+│⭔ ${prefix}ummi  <url>
+│⭔ ${prefix}kisahnabi  <nabi> [ERROR]
+│⭔ ${prefix}jadwalsholat  <daerah> [ERROR]
+│
+└───────⭓`
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                    templateMessage: {
+                        hydratedTemplate: {
+                            hydratedContentText: anu,
+                                locationMessage: {
+                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
+                                        hydratedFooterText: username,
+                                             hydratedButtons: [{
+                                     urlButton: {
+                                     displayText: 'Website Owner',
+                                     url: 'https://ramadhankukuh.github.io'
+                                                        }
+                                                    }, {
+                                     urlButton: {
+                                     displayText: 'YouTube Owner',
+                                     url: 'https://youtube.com/c/KukuhRamadhann'
+                                                        }
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'TOPUP DM',
+                                    id: 'topupdm'
+                                                        }
+                                                    }, {
+                                     quickReplyButton: {
+                                     displayText: 'OWNER',
+                                     id: 'owner'
+                                                        }  
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'BACK TO MENU',
+                                     id: 'menu'
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }), { userJid: m.chat, quoted: m })
+                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                    }
+    break
+
+    //MENU SOUND
+case 'soundmenu': {
+                m.reply('Lagi Di Coding Banh, Sabar')
+            }
+            break
+
+case 'soundmenubanh': {
+                    let sections = [
+                        {
+                        title: "Kategori - 1",
+                        rows: [
+                            {title: "Sound 1", rowId: "audio1", description: "69 Detik"}
+                        ]
+                        },
+                       {
+                        title: "Kategori - 2",
+                        rows: [
+                            {title: "Free Fire", rowId: "listdmff", description: "Menampilkan List Topup Free Fire"}
+                        ]
+                        },
+                       {
+                        title: "Kategori - 3",
+                        rows: [
+                            {title: "Mobile Legends", rowId: "listdmml", description: "Menampilkan List Topup Mobile Legends"}
+                        ]
+                        },
+                       {
+                        title: "Kategori - 4",
+                        rows: [
+                            {title: "Mobile Legends Pre Order", rowId: "listdmmlpo", description: "Menampilkan List Topup Mobile Legends Pre Order (Stok Terbatas)"}
+                        ]
+                        },
+                    ]
+                    
+                    let listMessage = {
+                      text: "Pilih Jenis Game Disini",
+                      footer: "Kuh",
+                      title: `${sayingtime} ${pushname}`,
+                      buttonText: "CLICK HERE",
+                      sections
+                    }
+                    
+                    hisoka.sendMessage(m.chat, listMessage, { quoted: m })
+                }
+                    break
     
     //MENU GROUB
 case 'grubmenu':{
@@ -3003,9 +3193,9 @@ Time Server :
 │⭔ ${prefix}hidetag  <text>
 │⭔ ${prefix}tagall  <text>
 │⭔ ${prefix}add  62xxx
-│⭔ ${prefix}kick  @user
-│⭔ ${prefix}promote  @user
-│⭔ ${prefix}demote  @user
+│⭔ ${prefix}kick  @tag
+│⭔ ${prefix}promote  @tag
+│⭔ ${prefix}demote  @tag
 │
 └───────⭓`
     const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
@@ -3014,7 +3204,7 @@ Time Server :
                             hydratedContentText: anu,
                                 locationMessage: {
                                     jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: '@ramadhankukuh',
+                                        hydratedFooterText: username,
                                              hydratedButtons: [{
                                      urlButton: {
                                      displayText: 'Website Owner',
@@ -3073,7 +3263,7 @@ Time Server :
                             hydratedContentText: anu,
                                 locationMessage: {
                                     jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: '@ramadhankukuh',
+                                        hydratedFooterText: username,
                                              hydratedButtons: [{
                                      urlButton: {
                                      displayText: 'Website Owner',
@@ -3154,7 +3344,7 @@ Time Server :
                             hydratedContentText: anu,
                                 locationMessage: {
                                     jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: '@ramadhankukuh',
+                                        hydratedFooterText: username,
                                              hydratedButtons: [{
                                      urlButton: {
                                      displayText: 'Website Owner',
@@ -3188,30 +3378,366 @@ Time Server :
                                     }
     break
     
-    //MENU IMAGE
-    case 'wibumenu':{
-    anu = `${sayingtime} ${pushname} 
+//MENU WIBU
+case 'wibumenu':{
+anu = `${sayingtime} ${pushname} 
     
-    Time Server :
-    ⭔ ${WaktuWib}
+Time Server :
+⭔ ${WaktuWib}
     
-    ┌──⭓ Image Menu
-    │
+┌──⭓ Wibu Menu
+│
 │⭔ ${prefix}anime [ ERROR BANH ]
 │⭔ ${prefix}waifu [ ERROR BANH ]
 │⭔ ${prefix}husbu [ ERROR BANH ]
 │⭔ ${prefix}neko [ ERROR BANH ]
 │⭔ ${prefix}shinobu
 │⭔ ${prefix}megumin
-    │
-    └───────⭓`
-    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+│
+└───────⭓`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
                     templateMessage: {
                         hydratedTemplate: {
                             hydratedContentText: anu,
                                 locationMessage: {
                                     jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: '@ramadhankukuh',
+                                        hydratedFooterText: username,
+                                             hydratedButtons: [{
+                                     urlButton: {
+                                     displayText: 'Website Owner',
+                                     url: 'https://ramadhankukuh.github.io'
+                                                        }
+                                                    }, {
+                                     urlButton: {
+                                     displayText: 'YouTube Owner',
+                                     url: 'https://youtube.com/c/KukuhRamadhann'
+                                                        }
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'TOPUP DM',
+                                    id: 'topupdm'
+                                                        }
+                                                    }, {
+                                     quickReplyButton: {
+                                     displayText: 'OWNER',
+                                     id: 'owner'
+                                                        }  
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'BACK TO MENU',
+                                     id: 'menu'
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }), { userJid: m.chat, quoted: m })
+                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                    }
+    break
+
+//MENU IMAGE
+case 'imagemenu':{
+anu = `${sayingtime} ${pushname} 
+    
+Time Server :
+⭔ ${WaktuWib}
+    
+`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                    templateMessage: {
+                        hydratedTemplate: {
+                            hydratedContentText: anu,
+                                locationMessage: {
+                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
+                                        hydratedFooterText: username,
+                                             hydratedButtons: [{
+                                     urlButton: {
+                                     displayText: 'Website Owner',
+                                     url: 'https://ramadhankukuh.github.io'
+                                                        }
+                                                    }, {
+                                     urlButton: {
+                                     displayText: 'YouTube Owner',
+                                     url: 'https://youtube.com/c/KukuhRamadhann'
+                                                        }
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'TOPUP DM',
+                                    id: 'topupdm'
+                                                        }
+                                                    }, {
+                                     quickReplyButton: {
+                                     displayText: 'OWNER',
+                                     id: 'owner'
+                                                        }  
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'BACK TO MENU',
+                                     id: 'menu'
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }), { userJid: m.chat, quoted: m })
+                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                    }
+    break
+
+//MENU FUN
+case 'funmenu':{
+anu = `${sayingtime} ${pushname} 
+    
+Time Server :
+⭔ ${WaktuWib}
+    
+`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                    templateMessage: {
+                        hydratedTemplate: {
+                            hydratedContentText: anu,
+                                locationMessage: {
+                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
+                                        hydratedFooterText: username,
+                                             hydratedButtons: [{
+                                     urlButton: {
+                                     displayText: 'Website Owner',
+                                     url: 'https://ramadhankukuh.github.io'
+                                                        }
+                                                    }, {
+                                     urlButton: {
+                                     displayText: 'YouTube Owner',
+                                     url: 'https://youtube.com/c/KukuhRamadhann'
+                                                        }
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'TOPUP DM',
+                                    id: 'topupdm'
+                                                        }
+                                                    }, {
+                                     quickReplyButton: {
+                                     displayText: 'OWNER',
+                                     id: 'owner'
+                                                        }  
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'BACK TO MENU',
+                                     id: 'menu'
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }), { userJid: m.chat, quoted: m })
+                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                    }
+    break
+
+//MENU CONVERT
+case 'convertmenu':{
+anu = `${sayingtime} ${pushname} 
+    
+Time Server :
+⭔ ${WaktuWib}
+    
+`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                    templateMessage: {
+                        hydratedTemplate: {
+                            hydratedContentText: anu,
+                                locationMessage: {
+                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
+                                        hydratedFooterText: username,
+                                             hydratedButtons: [{
+                                     urlButton: {
+                                     displayText: 'Website Owner',
+                                     url: 'https://ramadhankukuh.github.io'
+                                                        }
+                                                    }, {
+                                     urlButton: {
+                                     displayText: 'YouTube Owner',
+                                     url: 'https://youtube.com/c/KukuhRamadhann'
+                                                        }
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'TOPUP DM',
+                                    id: 'topupdm'
+                                                        }
+                                                    }, {
+                                     quickReplyButton: {
+                                     displayText: 'OWNER',
+                                     id: 'owner'
+                                                        }  
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'BACK TO MENU',
+                                     id: 'menu'
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }), { userJid: m.chat, quoted: m })
+                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                    }
+    break
+
+//MENU RANDOM
+case 'randommenu':{
+anu = `${sayingtime} ${pushname} 
+    
+Time Server :
+⭔ ${WaktuWib}
+    
+`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                    templateMessage: {
+                        hydratedTemplate: {
+                            hydratedContentText: anu,
+                                locationMessage: {
+                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
+                                        hydratedFooterText: username,
+                                             hydratedButtons: [{
+                                     urlButton: {
+                                     displayText: 'Website Owner',
+                                     url: 'https://ramadhankukuh.github.io'
+                                                        }
+                                                    }, {
+                                     urlButton: {
+                                     displayText: 'YouTube Owner',
+                                     url: 'https://youtube.com/c/KukuhRamadhann'
+                                                        }
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'TOPUP DM',
+                                    id: 'topupdm'
+                                                        }
+                                                    }, {
+                                     quickReplyButton: {
+                                     displayText: 'OWNER',
+                                     id: 'owner'
+                                                        }  
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'BACK TO MENU',
+                                     id: 'menu'
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }), { userJid: m.chat, quoted: m })
+                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                    }
+    break
+
+//MENU DATABASE
+case 'databasemenu':{
+anu = `${sayingtime} ${pushname} 
+    
+Time Server :
+⭔ ${WaktuWib}
+    
+`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                    templateMessage: {
+                        hydratedTemplate: {
+                            hydratedContentText: anu,
+                                locationMessage: {
+                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
+                                        hydratedFooterText: username,
+                                             hydratedButtons: [{
+                                     urlButton: {
+                                     displayText: 'Website Owner',
+                                     url: 'https://ramadhankukuh.github.io'
+                                                        }
+                                                    }, {
+                                     urlButton: {
+                                     displayText: 'YouTube Owner',
+                                     url: 'https://youtube.com/c/KukuhRamadhann'
+                                                        }
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'TOPUP DM',
+                                    id: 'topupdm'
+                                                        }
+                                                    }, {
+                                     quickReplyButton: {
+                                     displayText: 'OWNER',
+                                     id: 'owner'
+                                                        }  
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'BACK TO MENU',
+                                     id: 'menu'
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }), { userJid: m.chat, quoted: m })
+                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                    }
+    break
+
+//MENU OTHER
+case 'othermenu':{
+anu = `${sayingtime} ${pushname} 
+    
+Time Server :
+⭔ ${WaktuWib}
+    
+`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                    templateMessage: {
+                        hydratedTemplate: {
+                            hydratedContentText: anu,
+                                locationMessage: {
+                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
+                                        hydratedFooterText: username,
+                                             hydratedButtons: [{
+                                     urlButton: {
+                                     displayText: 'Website Owner',
+                                     url: 'https://ramadhankukuh.github.io'
+                                                        }
+                                                    }, {
+                                     urlButton: {
+                                     displayText: 'YouTube Owner',
+                                     url: 'https://youtube.com/c/KukuhRamadhann'
+                                                        }
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'TOPUP DM',
+                                    id: 'topupdm'
+                                                        }
+                                                    }, {
+                                     quickReplyButton: {
+                                     displayText: 'OWNER',
+                                     id: 'owner'
+                                                        }  
+                                                    }, {
+                                    quickReplyButton: {
+                                     displayText: 'BACK TO MENU',
+                                     id: 'menu'
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        }), { userJid: m.chat, quoted: m })
+                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                                    }
+    break
+
+//MENU OWNER
+case 'ownermenu':{
+anu = `${sayingtime} ${pushname} 
+    
+Time Server :
+⭔ ${WaktuWib}
+    
+`
+const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+                    templateMessage: {
+                        hydratedTemplate: {
+                            hydratedContentText: anu,
+                                locationMessage: {
+                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
+                                        hydratedFooterText: username,
                                              hydratedButtons: [{
                                      urlButton: {
                                      displayText: 'Website Owner',
@@ -3251,7 +3777,10 @@ case 'list': case 'menu': case 'help': case '?': {
     covidapi = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
     vaksin = await fetchJson(`https://vaksincovid19-api.vercel.app/api/vaksin`)
 anu = `${sayingtime} ${pushname} 
-Bot Ini Aktif 24 Jam, Jika Ada BUG / BOT Tidak Merespon Bisa Hubungi Owner. Untuk Melihat Menu Tekan Tombol LIST MENU
+
+Bot Ini Aktif 24 Jam, Jika Ada BUG / BOT Tidak Merespon Bisa Hubungi Owner.
+
+Untuk Melihat Menu Tekan Tombol *LIST MENU*
 
 『 *INDO TIME* 』
 〆 ${WaktuWib} WIB
@@ -3280,7 +3809,7 @@ templateMessage: {
         hydratedContentText: anu,
             locationMessage: {
                 jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                    hydratedFooterText: '@ramadhankukuh',
+                    hydratedFooterText: username,
                          hydratedButtons: [{
                  urlButton: {
                  displayText: 'Website Owner',
@@ -3340,8 +3869,7 @@ templateMessage: {
                         if (typeof evaled !== 'string') evaled = require('util').inspect(evaled)
                         await m.reply(evaled)
                     } catch (err) {
-                        m = String(err)
-                        await m.reply(m)
+                        await m.reply(String(err))
                     }
                 }
 
@@ -3379,14 +3907,14 @@ templateMessage: {
 		    if (!(budy.toLowerCase() in msgs)) return
 		    hisoka.copyNForward(m.chat, msgs[budy.toLowerCase()], true)
 		}
-        }
+    }
         
 
     } catch (err) {
         m.reply(util.format(err))
     }
-}
 
+}
 
 let file = require.resolve(__filename)
 fs.watchFile(file, () => {

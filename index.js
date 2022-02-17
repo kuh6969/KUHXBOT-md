@@ -12,9 +12,10 @@ const fs = require('fs')
 const chalk = require('chalk')
 const FileType = require('file-type')
 const yargs = require('yargs')
+const axios = require('axios')
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
-const { smsg, isUrl, generateMessageTag, getBuffer } = require('./lib/myfunc')
+const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia } = require('./lib/myfunc')
 
 global.api = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs ? global.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name] } : {}) })) : '')
 
@@ -26,7 +27,18 @@ users: {},
 ...(global.db.data || {})
 }
 
-const store = makeInMemoryStore({ logger: pino().child({ level: 'fatal', stream: 'store' }) })
+const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
+
+const getVersionWaweb = () => {
+    let version
+    try {
+        let a = axios.get('https://web.whatsapp.com/check-update?version=1&platform=web')
+        version = [a.data.currentVersion.replace(/[.]/g, ', ')]
+    } catch {
+        version = [2, 2204, 13]
+    }
+    return version
+}
 
 
 async function startHisoka() {
@@ -34,7 +46,8 @@ async function startHisoka() {
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
         browser: ['Hisoka Multi Device','Safari','1.0.0'],
-        auth: state
+        auth: state,
+        version: getVersionWaweb() || [2, 2204, 13]
     })
 
     store.bind(hisoka.ev)
@@ -129,13 +142,13 @@ async function startHisoka() {
         }
     })
 
-    hisoka.getName = async (jid, withoutContact  = false) => {
-        id = await hisoka.decodeJid(jid)
+    hisoka.getName = (jid, withoutContact  = false) => {
+        id = hisoka.decodeJid(jid)
         withoutContact = hisoka.withoutContact || withoutContact 
         let v
         if (id.endsWith("@g.us")) return new Promise(async (resolve) => {
             v = store.contacts[id] || {}
-            if (!(v.name || v.subject)) v = await hisoka.groupMetadata(id) || {}
+            if (!(v.name || v.subject)) v = hisoka.groupMetadata(id) || {}
             resolve(v.name || v.subject || PhoneNumber('+' + id.replace('@s.whatsapp.net', '')).getNumber('international'))
         })
         else v = id === '0@s.whatsapp.net' ? {
@@ -336,15 +349,30 @@ async function startHisoka() {
      * 
      * @param {*} jid 
      * @param {*} path 
+     * @param {*} filename
+     * @param {*} caption
      * @param {*} quoted 
      * @param {*} options 
      * @returns 
      */
-    hisoka.sendMedia = async (jid, path, quoted, options = {}) => {
-	 let { ext, mime, data } = await hisoka.getFile(path)
-	 messageType = mime.split("/")[0]
-	 pase = messageType.replace('application', 'document') || messageType
-	 return await hisoka.sendMessage(m.chat, { [`${pase}`]: data, mimetype: mime, ...options }, { quoted })
+    hisoka.sendMedia = async (jid, path, fileName = '', caption = '', quoted, options = {}) => {
+	 let types = await hisoka.getFile(path, true)
+        let { mime, ext, res, data, filename: pathFile } = types
+        if (res && res.status !== 200 || file.length <= 65536) {
+            try { throw { json: JSON.parse(file.toString()) } }
+            catch (e) { if (e.json) throw e.json }
+        }
+	let opt = {}
+	if (quoted) opt.quoted = quoted
+	let type = '', mimetype = mime
+	if (options.asDocument) type = 'document'
+	if (/webp/.test(mime)) type = 'sticker'
+	else if (/image/.test(mime)) type = 'image'
+	else if (/video/.test(mime)) type = 'video'
+	else if (/audio/.test(mime)) type = 'audio'
+	else type = 'document'
+	await hisoka.sendMessage(jid, { [type]: { url: pathFile }, caption, mimetype, fileName, ...options }, { ...opt, ...options })
+	return fs.promises.unlink(pathFile)
     }
 
     /**
@@ -422,21 +450,23 @@ async function startHisoka() {
      * @param {*} path 
      * @returns 
      */
-    hisoka.getFile = async (path, save) => {
-        let res, filename
-		let data = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,` [1], 'base64') : /^https?:\/\//.test(path) ? await (res = await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : typeof path === 'string' ? path : Buffer.alloc(0)
-		if (!Buffer.isBuffer(data)) throw new TypeError('Result is not a buffer')
-		let type = await FileType.fromBuffer(data) || {
-			mime: 'application/octet-stream',
-			ext: '.bin'
-		}
-		if (data && save && !filename) (filename = path.join(__dirname, './src/' + new Date * 1 + '.' + type.ext), await fs.promises.writeFile(filename, data))
-		return {
-			res,
-			filename,
-			...type,
-			data
-		}
+hisoka.getFile = async (PATH, save) => {
+        let res
+        let data = Buffer.isBuffer(PATH) ? PATH : /^data:.*?\/.*?;base64,/i.test(PATH) ? Buffer.from(PATH.split`,`[1], 'base64') : /^https?:\/\//.test(PATH) ? await (res = await getBuffer(PATH)) : fs.existsSync(PATH) ? (filename = PATH, fs.readFileSync(PATH)) : typeof PATH === 'string' ? PATH : Buffer.alloc(0)
+        //if (!Buffer.isBuffer(data)) throw new TypeError('Result is not a buffer')
+        let type = await FileType.fromBuffer(data) || {
+            mime: 'application/octet-stream',
+            ext: '.bin'
+        }
+        filename = path.join(__filename, '../src/' + new Date * 1 + '.' + type.ext)
+        if (data && save) fs.promises.writeFile(filename, data)
+        return {
+            res,
+            filename,
+	    size: await getSizeMedia(data),
+            ...type,
+            data
+        }
     }
 
     return hisoka
