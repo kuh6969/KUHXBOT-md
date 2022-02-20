@@ -72,6 +72,11 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
             username = '@ramadhankukuh'
             const copidindo = await covidindo()
             const copidworld = await corona()
+            const covidapi = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
+            const vaksin = await fetchJson(`https://vaksincovid19-api.vercel.app/api/vaksin`)
+
+            const  { cmmnd } = require(`./command`)
+            oiii = cmmnd
             
             //Waktu
         const salam = moment().tz('Asia/Jakarta').format('HH:mm:ss')
@@ -109,6 +114,27 @@ var sayingtime = 'Selamat Malam'
         if (!hisoka.public) {
             if (!m.key.fromMe) return
         }
+
+
+        // image buat menu
+        const logo_listmenu = fs.readFileSync('./lib/hisoka.jpg')
+        const logo_allmenu = await getBuffer('https://i.ibb.co/LtvGbT9/20220220-133108.jpg')
+        const logo_anonmenu = await getBuffer('https://i.ibb.co/prrW6Fn/20220220-161136.jpg')
+        const logo_downloadmenu = await getBuffer('https://i.ibb.co/6wbTsDZ/20220220-161214.jpg')
+        const logo_islammenu = await getBuffer('https://i.ibb.co/TkpKdR7/20220220-161228.jpg')
+        const logo_grubmenu = await getBuffer('https://i.ibb.co/c8fC532/20220220-161256.jpg')
+        const logo_searchmenu = await getBuffer('https://i.ibb.co/VBpYZL5/20220220-161319.jpg')
+        const logo_primbonmenu = await getBuffer('https://i.ibb.co/bQ0FcnB/20220220-161332.jpg')
+        const logo_wibumenu = await getBuffer('https://i.ibb.co/wWrDmxb/20220220-161343.jpg')
+        const logo_imagemenu = await getBuffer('https://i.ibb.co/YL4SsBc/20220220-161356.jpg')
+        const logo_funmenu = await getBuffer('https://i.ibb.co/rbqCzMw/20220220-161407.jpg')
+        const logo_convertmenu = await getBuffer('https://i.ibb.co/x6Dx3xN/20220220-161421.jpg')
+        const logo_randommenu = await getBuffer('https://i.ibb.co/qdQcXHR/20220220-161435.jpg')
+        const logo_databasemenu = await getBuffer('https://i.ibb.co/QJdRZVX/20220220-161447.jpg')
+        const logo_othermenu = await getBuffer('https://i.ibb.co/Y06sJ0m/20220220-161458.jpg')
+        const logo_ownermenu = await getBuffer('https://i.ibb.co/vDD2NYn/20220220-161507.jpg')
+        const logo_statustopup = await getBuffer('https://i.ibb.co/p1ckgww/20220220-172726.jpg')
+
 
         // Push Message To Console && Auto Read
         if (m.message) {
@@ -1221,6 +1247,37 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
                 await fs.unlinkSync(media)
             }
             break
+case 'toaud': case 'toaudio': {
+            if (!/video/.test(mime) && !/audio/.test(mime)) throw `Kirim/Reply Video/Audio Yang Ingin Dijadikan Audio Dengan Caption ${prefix + command}`
+            if (!quoted) throw `Kirim/Reply Video/Audio Yang Ingin Dijadikan Audio Dengan Caption ${prefix + command}`
+            m.reply(mess.wait)
+            let media = await quoted.download()
+            let { toAudio } = require('./lib/converter')
+            let audio = await toAudio(media, 'mp4')
+            hisoka.sendMessage(m.chat, {audio: audio, mimetype: 'audio/mpeg'}, { quoted : m })
+            }
+            break
+            case 'tomp3': {
+            if (/document/.test(mime)) throw `Kirim/Reply Video/Audio Yang Ingin Dijadikan MP3 Dengan Caption ${prefix + command}`
+            if (!/video/.test(mime) && !/audio/.test(mime)) throw `Kirim/Reply Video/Audio Yang Ingin Dijadikan MP3 Dengan Caption ${prefix + command}`
+            if (!quoted) throw `Kirim/Reply Video/Audio Yang Ingin Dijadikan MP3 Dengan Caption ${prefix + command}`
+            m.reply(mess.wait)
+            let media = await quoted.download()
+            let { toAudio } = require('./lib/converter')
+            let audio = await toAudio(media, 'mp4')
+            hisoka.sendMessage(m.chat, {document: audio, mimetype: 'audio/mpeg', fileName: `Convert By ${hisoka.user.name}.mp3`}, { quoted : m })
+            }
+            break
+            case 'tovn': case 'toptt': {
+            if (!/video/.test(mime) && !/audio/.test(mime)) throw `Reply Video/Audio Yang Ingin Dijadikan VN Dengan Caption ${prefix + command}`
+            if (!quoted) throw `Reply Video/Audio Yang Ingin Dijadikan VN Dengan Caption ${prefix + command}`
+            m.reply(mess.wait)
+            let media = await quoted.download()
+            let { toPTT } = require('./lib/converter')
+            let audio = await toPTT(media, 'mp4')
+            hisoka.sendMessage(m.chat, {audio: audio, mimetype:'audio/mpeg', ptt:true }, {quoted:m})
+            }
+            break
             case 'togif': {
                 if (!quoted) throw 'Reply Image'
                 if (!/webp/.test(mime)) throw `balas stiker dengan caption *${prefix + command}*`
@@ -1265,7 +1322,7 @@ let teks = `══✪〘 *👥 Tag All* 〙✪══
 	      scale: "100%",
 	      outputFile 
 	    }).then(async result => {
-	    hisoka.sendMessage(m.chat, {image: fs.readFileSync(outputFile), caption: mess.success}, {quoted:m})
+	    hisoka.sendMessage(m.chat, {image: fs.readFileSync(outputFile), caption: mess.success}, { quoted : m })
 	    await fs.unlinkSync(localFile)
 	    await fs.unlinkSync(outputFile)
 	    })
@@ -1365,8 +1422,8 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
                 let search = await yts(text)
                 let anu = search.videos[Math.floor(Math.random() * search.videos.length)]
                 let buttons = [
-                    {buttonId: `ytmp3 ${anu.url} 128kbps`, buttonText: {displayText: '♫ Audio'}, type: 1},
-                    {buttonId: `ytmp4 ${anu.url} 360p`, buttonText: {displayText: '► Video'}, type: 1}
+                    {buttonId: `ytmp3 ${anu.url}`, buttonText: {displayText: '♫ Audio'}, type: 1},
+                    {buttonId: `ytmp4 ${anu.url}`, buttonText: {displayText: '► Video'}, type: 1}
                 ]
                 let buttonMessage = {
                     image: { url: anu.thumbnail },
@@ -1388,6 +1445,119 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
                 hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
             }
             break
+case 'iqra': {
+		oh = `Example : ${prefix + command} 3\n\nIQRA Yang tersedia : 1,2,3,4,5,6`
+		if (!text) throw oh
+		yy = await getBuffer(`https://islamic-api-indonesia.herokuapp.com/api/data/pdf/iqra${text}`)
+		hisoka.sendMessage(m.chat, {document: yy, mimetype: 'application/pdf', fileName: `iqra${text}.pdf`}, {quoted:m}).catch ((err) => m.reply(oh))
+		}
+		break
+		case 'juzamma': {
+		if (args[0] === 'pdf') {
+		m.reply(mess.wait)
+		hisoka.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pdf'}, mimetype: 'application/pdf', fileName: 'juz-amma-arab-latin-indonesia.pdf'}, {quoted:m})
+		} else if (args[0] === 'docx') {
+		m.reply(mess.wait)
+		hisoka.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.docx'}, mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', fileName: 'juz-amma-arab-latin-indonesia.docx'}, {quoted:m})
+		} else if (args[0] === 'pptx') {
+		m.reply(mess.wait)
+		hisoka.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.pptx'}, mimetype: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', fileName: 'juz-amma-arab-latin-indonesia.pptx'}, {quoted:m})
+		} else if (args[0] === 'xlsx') {
+		m.reply(mess.wait)
+		hisoka.sendMessage(m.chat, {document: {url: 'https://fatiharridho.my.id/database/islam/juz-amma-arab-latin-indonesia.xlsx'}, mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', fileName: 'juz-amma-arab-latin-indonesia.xlsx'}, {quoted:m})
+		} else {
+		m.reply(`Mau format apa ? Example : ${prefix + command} pdf
+Format yang tersedia : pdf, docx, pptx, xlsx`)
+		}
+		}
+		break
+		case 'hadis': case 'hadist': {
+		if (!args[0]) throw `Contoh:
+${prefix + command} bukhari 1
+${prefix + command} abu-daud 1
+Pilihan tersedia:
+abu-daud
+1 - 4590
+ahmad
+1 - 26363
+bukhari
+1 - 7008
+darimi
+1 - 3367
+ibu-majah
+1 - 4331
+nasai
+1 - 5662
+malik
+1 - 1594
+muslim
+1 - 5362`
+		if (!args[1]) throw `Hadis yang ke berapa?\n\ncontoh:\n${prefix + command} muslim 1`
+		try {
+		let res = await fetchJson(`https://islamic-api-indonesia.herokuapp.com/api/data/json/hadith/${args[0]}`)
+		let { number, arab, id } = res.find(v => v.number == args[1])
+		m.reply(`No. ${number}
+${arab}
+${id}`)
+		} catch (e) {
+		m.reply(`Hadis tidak ditemukan !`)
+		}
+		}
+		break
+		case 'alquran': {
+		if (!args[0]) throw `Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah surah Al-Fatihah ayat 2 beserta audionya, dan ayatnya 1 aja`
+		if (!args[1]) throw `Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah surah Al-Fatihah ayat 2 beserta audionya, dan ayatnya 1 aja`
+		let res = await fetchJson(`https://islamic-api-indonesia.herokuapp.com/api/data/quran?surah=${args[0]}&ayat=${args[1]}`)
+		let txt = `*Arab* : ${res.result.data.text.arab}
+*English* : ${res.result.data.translation.en}
+*Indonesia* : ${res.result.data.translation.id}
+( Q.S ${res.result.data.surah.name.transliteration.id} : ${res.result.data.number.inSurah} )`
+		m.reply(txt)
+		hisoka.sendMessage(m.chat, {audio: { url: res.result.data.audio.primary }, mimetype: 'audio/mpeg'}, { quoted : m })
+		}
+		break
+		case 'tafsirsurah': {
+		if (!args[0]) throw `Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah tafsir surah Al-Fatihah ayat 2`
+		if (!args[1]) throw `Contoh penggunaan:\n${prefix + command} 1 2\n\nmaka hasilnya adalah tafsir surah Al-Fatihah ayat 2`
+		let res = await fetchJson(`https://islamic-api-indonesia.herokuapp.com/api/data/quran?surah=${args[0]}&ayat=${args[1]}`)
+		let txt = `「 *Tafsir Surah*  」
+*Pendek* : ${res.result.data.tafsir.id.short}
+*Panjang* : ${res.result.data.tafsir.id.long}
+( Q.S ${res.result.data.surah.name.transliteration.id} : ${res.result.data.number.inSurah} )`
+		m.reply(txt)
+		}
+		break
+		   case 'bass': case 'blown': case 'deep': case 'earrape': case 'fast': case 'fat': case 'nightcore': case 'reverse': case 'robot': case 'slow': case 'smooth': case 'tupai':
+                try {
+                let set
+                if (/bass/.test(command)) set = '-af equalizer=f=54:width_type=o:width=2:g=20'
+                if (/blown/.test(command)) set = '-af acrusher=.1:1:64:0:log'
+                if (/deep/.test(command)) set = '-af atempo=4/4,asetrate=44500*2/3'
+                if (/earrape/.test(command)) set = '-af volume=12'
+                if (/fast/.test(command)) set = '-filter:a "atempo=1.63,asetrate=44100"'
+                if (/fat/.test(command)) set = '-filter:a "atempo=1.6,asetrate=22100"'
+                if (/nightcore/.test(command)) set = '-filter:a atempo=1.06,asetrate=44100*1.25'
+                if (/reverse/.test(command)) set = '-filter_complex "areverse"'
+                if (/robot/.test(command)) set = '-filter_complex "afftfilt=real=\'hypot(re,im)*sin(0)\':imag=\'hypot(re,im)*cos(0)\':win_size=512:overlap=0.75"'
+                if (/slow/.test(command)) set = '-filter:a "atempo=0.7,asetrate=44100"'
+                if (/smooth/.test(command)) set = '-filter:v "minterpolate=\'mi_mode=mci:mc_mode=aobmc:vsbmc=1:fps=120\'"'
+                if (/tupai/.test(command)) set = '-filter:a "atempo=0.5,asetrate=65100"'
+                if (/audio/.test(mime)) {
+                m.reply(mess.wait)
+                let media = await hisoka.downloadAndSaveMediaMessage(quoted)
+                let ran = getRandom('.mp3')
+                exec(`ffmpeg -i ${media} ${set} ${ran}`, (err, stderr, stdout) => {
+                fs.unlinkSync(media)
+                if (err) return m.reply(err)
+                let buff = fs.readFileSync(ran)
+                hisoka.sendMessage(m.chat, { audio: buff, mimetype: 'audio/mpeg' }, { quoted : m })
+                fs.unlinkSync(ran)
+                })
+                } else m.reply(`Balas audio yang ingin diubah dengan caption *${prefix + command}*`)
+                } catch (e) {
+                m.reply(e)
+                }
+                break
 	    case 'ytmp3': case 'ytaudio': {
                 if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=xxxx 128kbps`
 		let { aiovideodl } = require('./lib/scraper')
@@ -1458,7 +1628,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
                     ]
                     let buttonMessage = {
                         image: { url: data.url },
-                        caption: `Random SFW`,
+                        caption: `Random SFW\nAyo🤨📸`,
                         footer: name,
                         buttons: buttons,
                         headerType: 4
@@ -1466,6 +1636,14 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
                     hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
                 })
                 break
+                case 'couple': {
+                    m.reply(mess.wait)
+                    let anu = await fetchJson('https://raw.githubusercontent.com/iamriz7/kopel_/main/kopel.json')
+                    let random = anu[Math.floor(Math.random() * anu.length)]
+                    hisoka.sendMessage(m.chat, { image: { url: random.male }, caption: `Couple Male` }, { quoted: m })
+                    hisoka.sendMessage(m.chat, { image: { url: random.female }, caption: `Couple Female` }, { quoted: m })
+                }
+            break
             case 'coffe': case 'kopi': {
             let buttons = [
                     {buttonId: `coffe`, buttonText: {displayText: 'Next Image'}, type: 1}
@@ -1585,7 +1763,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'ramalancinta': case 'ramalcinta': {
-                if (!text) throw `Example : ${prefix + command} Dika, 7, 7, 2005, Novia, 16, 11, 2004`
+                if (!text) throw `Command : ${prefix + command} Nama Kamu, tgl lahir, bln lahir, thn lahir, Nama Dia, tgl lahir, bln lahir, thn lahir\n\nExample : ${prefix + command} Kamu, 6, 9, 2005, Dia, 6, 9, 2004`
                 let [nama1, tgl1, bln1, thn1, nama2, tgl2, bln2, thn2] = text.split`,`
                 let anu = await primbon.ramalan_cinta(nama1, tgl1, bln1, thn1, nama2, tgl2, thn2)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1593,14 +1771,14 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'artinama': {
-                if (!text) throw `Example : ${prefix + comman} Dika Ardianta`
+                if (!text) throw `Example : ${prefix + comman} Kukuh Ramadhan`
                 let anu = await primbon.arti_nama(text)
                 if (anu.status == false) return m.reply(anu.message)
                 hisoka.sendText(m.chat, `⭔ *Nama :* ${anu.message.nama}\n⭔ *Arti :* ${anu.message.arti}\n⭔ *Catatan :* ${anu.message.catatan}`, m)
             }
             break
             case 'kecocokannama': case 'cocoknama': {
-                if (!text) throw `Example : ${prefix + comman} Dika, 7, 7, 2005`
+                if (!text) throw `*Command :* ${prefix + command} Nama Kamu, tgl lahir, bln lahir, thn lahir\n\n*Example :* ${prefix + command} Kukuh, 1, 11, 2005`
                 let [nama, tgl, bln, thn] = text.split`,`
                 let anu = await primbon.kecocokan_nama(nama, tgl, bln, thn)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1608,7 +1786,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'kecocokanpasangan': case 'cocokpasangan': case 'pasangan': {
-                if (!text) throw `Example : ${prefix + command} Dika|Novia`
+                if (!text) throw `*Command :* ${prefix + command} Nama Kamu|Nama Dia`
                 let [nama1, nama2] = text.split`|`
                 let anu = await primbon.kecocokan_nama_pasangan(nama1, nama2)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1616,7 +1794,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'jadianpernikahan': case 'jadiannikah': {
-                if (!text) throw `Example : ${prefix + command} 6, 12, 2020`
+                if (!text) throw `*Command :* ${prefix + command} tgl jadian, bln jadian, thn jadian\n\n*Example :* ${prefix + command} 6, 12, 2020`
                 let [tgl, bln, thn] = text.split`,`
                 let anu = await primbon.tanggal_jadian_pernikahan(tgl, bln, thn)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1624,7 +1802,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'sifatusaha': {
-                if (!ext)throw `Example : ${prefix+ command} 28, 12, 2021`
+                if (!ext)throw `*Command :* ${prefix + command} tgl bisnis, bln bisnis, thn bisnis\n\n*Example :* ${prefix+ command} 28, 12, 2021`
                 let [tgl, bln, thn] = text.split`,`
                 let anu = await primbon.sifat_usaha_bisnis(tgl, bln, thn)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1632,7 +1810,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'rejeki': case 'rezeki': {
-                if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
+                if (!text) throw `*Command :* ${prefix + command} tgl rezeki, bln rezeki, thn rezeki\n\n*Example :* ${prefix + command} 7, 7, 2005`
                 let [tgl, bln, thn] = text.split`,`
                 let anu = await primbon.rejeki_hoki_weton(tgl, bln, thn)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1640,7 +1818,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'pekerjaan': case 'kerja': {
-                if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
+                if (!text) throw `*Command :* ${prefix + command} tgl kerja, bln kerja, thn kerja\n\n*Example :* ${prefix + command} 7, 7, 2005`
                 let [tgl, bln, thn] = text.split`,`
                 let anu = await primbon.pekerjaan_weton_lahir(tgl, bln, thn)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1648,7 +1826,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'ramalannasib': case 'ramalnasib': case 'nasib': {
-                if (!text) throw `Example : 7, 7, 2005`
+                if (!text) throw `*Command :* ${prefix + command} tgl nasib, bln nasib, thn nasib\n\n*Example :* 7, 7, 2005`
                 let [tgl, bln, thn] = text.split`,`
                 let anu = await primbon.ramalan_nasib(tgl, bln, thn)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1656,7 +1834,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'potensipenyakit': case 'penyakit': {
-                if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
+                if (!text) throw `*Command :* ${prefix + command} tgl sakit, bln sakit, thn sakit\n\n*Example :* ${prefix + command} 7, 7, 2005`
                 let [tgl, bln, thn] = text.split`,`
                 let anu = await primbon.cek_potensi_penyakit(tgl, bln, thn)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1664,7 +1842,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'artitarot': case 'tarot': {
-                if (!text) throw `Example : ${prefix + command} 7, 7, 2005`
+                if (!text) throw `*Command :* ${prefix + command} tgl lahir, bln lahir, thn lahir\n\n*Example :* ${prefix + command} 7, 7, 2005`
                 let [tgl, bln, thn] = text.split`,`
                 let anu = await primbon.arti_kartu_tarot(tgl, bln, thn)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1672,7 +1850,7 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
             }
             break
             case 'fengshui': {
-                if (!text) throw `Example : ${prefix + command} Dika, 1, 2005\n\nNote : ${prefix + command} Nama, gender, tahun lahir\nGender : 1 untuk laki-laki & 2 untuk perempuan`
+                if (!text) throw `*Example :* ${prefix + command} Nama kamu, 1, 2005\n\n*Note :* ${prefix + command} Nama, gender, tahun lahir\nGender : 1 untuk laki-laki & 2 untuk perempuan`
                 let [nama, gender, tahun] = text.split`,`
                 let anu = await primbon.perhitungan_feng_shui(nama, gender, tahun)
                 if (anu.status == false) return m.reply(anu.message)
@@ -1863,16 +2041,21 @@ Untuk Download Media Silahkan Klik salah satu Button dibawah ini atau masukkan c
                     headerType: 2
                 }
                 let msg = await hisoka.sendMessage(m.chat, buttonMessage, { quoted: m })
-                hisoka.sendMessage(m.chat, { audio: { url: result.result.audio } }, { quoted: msg })
+                		let { toAudio } = require('./lib/converter')
+		let nganu = await getBuffer(result.result.nowatermark)
+		let cnvrt = await toAudio(nganu, 'mp4')
+                hisoka.sendMessage(m.chat, { audio: cnvrt, mimetype: 'audio/mpeg'}, { quoted: msg })
             }
             break
 	        case 'igdl': case 'ig': case 'instagram': {
                 if (!text) throw 'Masukkan Query Link!'
                 m.reply(mess.wait)
+                if (/(?:\/p\/|\/reel\/|\/tv\/)([^\s&]+)/.test(isUrl(text)[0])) {
                 let { igdl } = require ('./lib/gif')
                 let result = await igdl((`${text}`))
                 hisoka.sendMessage(m.chat, { video: { url: result.result.link }, caption: `Deskripsi ${result.result.desc}` }, { quoted: m})
             } 
+          }
             break
             case 'igdltv': case 'igreels': case 'igdl2': {
                 if (!text) throw 'Masukkan Query Link!'
@@ -2248,7 +2431,7 @@ case 'command': {
                     {
                     title: "Menu - 1",
                     rows: [
-                        {title: "Semua Perintah", rowId: "allmenu", description: "Menampilkan Semua Menu ( Disarankan )"}
+                        {title: "Semua Perintah", rowId: "allmenu", description: "Menampilkan Semua Menu"}
                     ]
                     },
                    {
@@ -2358,26 +2541,20 @@ case 'command': {
 //KATEGORI JUALAN
 case 'topupdm': {
                     let sections = [
-                        {
-                        title: "Kategori - 1",
-                        rows: [
-                            {title: "Promo", rowId: "listpromo", description: "Menampilkan Menu Promo"}
-                        ]
-                        },
                        {
-                        title: "Kategori - 2",
+                        title: "Kategori",
                         rows: [
                             {title: "Free Fire", rowId: "listdmff", description: "Menampilkan List Topup Free Fire"}
                         ]
                         },
                        {
-                        title: "Kategori - 3",
+                        title: "Kategori",
                         rows: [
                             {title: "Mobile Legends", rowId: "listdmml", description: "Menampilkan List Topup Mobile Legends"}
                         ]
                         },
                        {
-                        title: "Kategori - 4",
+                        title: "Kategori",
                         rows: [
                             {title: "Mobile Legends Pre Order", rowId: "listdmmlpo", description: "Menampilkan List Topup Mobile Legends Pre Order (Stok Terbatas)"}
                         ]
@@ -2396,76 +2573,41 @@ case 'topupdm': {
                 }
                     break
 
-//LIST PROMO
-case 'listpromo': {
-                    let sections = [
-                        {
-                        title: "Promo - 1",
-                        rows: [
-                            {title: "Free Fire 1.450 Diamonds", rowId: "owner", description: "IDR 180.000"}
-                        ]
-                        },
-                       {
-                        title: "Promo - 2",
-                        rows: [
-                            {title: "PUBGM 325 UC", rowId: "owner", description: "IDR 50.000"}
-                        ]
-                        },
-                       {
-                        title: "Promo - 3",
-                        rows: [
-                            {title: "Paket Three 33GB", rowId: "owner", description: "IDR 60.000"}
-                        ]
-                        },
-                    ]
-                    
-                    let listMessage = {
-                      text: "Pilih Kategori Promo Disini\nJika Ingin Order Langsung Ke Owner",
-                      footer: "Kuh",
-                      title: `${sayingtime} ${pushname}`,
-                      buttonText: "CLICK HERE",
-                      sections
-                    }
-                    
-                    hisoka.sendMessage(m.chat, listMessage, { quoted: m })
-                }
-                    break
-
 //LIST FREE FIRE
 case 'listdmff': {
                     let sections = [
                         {
-                        title: "Free Fire - 1",
+                        title: "Free Fire",
                         rows: [
-                            {title: "70 Diamonds", rowId: "topupff", description: "IDR 9.500"}
+                            {title: `70 Diamonds`, rowId: "topupff", description: `IDR 9.500`}
                         ]
                         },
                        {
-                        title: "Free Fire - 2",
+                        title: "Free Fire",
                         rows: [
-                            {title: "100 Diamonds", rowId: "topupff", description: "IDR 14.000"}
+                            {title: `100 Diamonds`, rowId: "topupff", description: `IDR 14.000`}
                         ]
                         },
                        {
-                        title: "Free Fire - 3",
+                        title: "Free Fire",
                         rows: [
                             {title: "140 Diamonds", rowId: "topupff", description: "IDR 18.500"}
                         ]
                         },
                        {
-                        title: "Free Fire - 4",
+                        title: "Free Fire",
                         rows: [
                             {title: "210 Diamonds", rowId: "topupff", description: "IDR 28.500"}
                         ]
                         },
                        {
-                        title: "Free Fire - 5",
+                        title: "Free Fire",
                         rows: [
                             {title: "280 Diamonds", rowId: "topupff", description: "IDR 37.000"}
                         ]
                         },
                        {
-                        title: "Free Fire - 6",
+                        title: "Free Fire",
                         rows: [
                             {title: "355 Diamonds", rowId: "topupff", description: "IDR 47.000"}
                         ]
@@ -2490,43 +2632,43 @@ case 'listdmml': {
                         {
                         title: "Mobile Legends - 1",
                         rows: [
-                            {title: "39 Diamonds", rowId: "topupml", description: "IDR 10.000"}
+                            {title: "39 Diamonds", rowId: "topupml", description: "IDR 11.000"}
                         ]
                         },
                        {
                         title: "Mobile Legends - 2",
                         rows: [
-                            {title: "65 Diamonds", rowId: "topupml", description: "IDR 15.000"}
+                            {title: "65 Diamonds", rowId: "topupml", description: "IDR 16.000"}
                         ]
                         },
                        {
                         title: "Mobile Legends - 3",
                         rows: [
-                            {title: "92 Diamonds", rowId: "topupml", description: "IDR 20.000"}
+                            {title: "92 Diamonds", rowId: "topupml", description: "IDR 22.000"}
                         ]
                         },
                        {
                         title: "Mobile Legends - 4",
                         rows: [
-                            {title: "133 Diamonds", rowId: "topupml", description: "IDR 30.000"}
+                            {title: "133 Diamonds", rowId: "topupml", description: "IDR 32.000"}
                         ]
                         },
                        {
                         title: "Mobile Legends - 5",
                         rows: [
-                            {title: "184 Diamonds", rowId: "topupml", description: "IDR 40.000"}
+                            {title: "184 Diamonds", rowId: "topupml", description: "IDR 42.000"}
                         ]
                         },
                        {
                         title: "Mobile Legends - 6",
                         rows: [
-                            {title: "225 Diamonds", rowId: "topupml", description: "IDR 50.000"}
+                            {title: "225 Diamonds", rowId: "topupml", description: "IDR 52.000"}
                         ]
                         },
                       {
                         title: "Mobile Legends - 7",
                         rows: [
-                            {title: "266 Diamonds", rowId: "topupml", description: "IDR 60.000"}
+                            {title: "266 Diamonds", rowId: "topupml", description: "IDR 62.000"}
                         ]
                         },
                     ]
@@ -2551,7 +2693,7 @@ case 'topupff':{
           arg = args.join(' ')
           id = arg.split('_')[0]
           order = arg.split('_')[1]
-          get_result = await fetchJson(`https://api.lolhuman.xyz/api/freefire/${text}?apikey=${global.lolkey1}`)
+          get_result = await fetchJson(`https://api.lolhuman.xyz/api/freefire/${text}?apikey=1756919c2cec2aa7d7769084`)
           nick = get_result.result
           txt = `${sayingtime} ${pushname} 
                                    
@@ -2567,8 +2709,8 @@ const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
                     hydratedTemplate: {
                         hydratedContentText: txt,
                             locationMessage: {
-                                jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg')  },
-                                    hydratedFooterText: 'Gagal Ya Banh?? 🗿\nNi Fitur Topup Masih Beta\nMau Topup? Bisa Langsung Order Ke Owner',
+                                jpegThumbnail: logo_statustopup  },
+                                    hydratedFooterText: username,
                                          hydratedButtons: [{
                                  urlButton: {
                                  displayText: 'Website Owner',
@@ -2612,7 +2754,7 @@ case 'topupml':{
           id = arg.split('_')[0]
           server = arg.split('_')[1]
           order = arg.split('_')[2]
-          get_result = await fetchJson(`https://api.lolhuman.xyz/api/mobilelegend/${id}/${server}?apikey=${global.lolkey2}`)
+          get_result = await fetchJson(`https://api.lolhuman.xyz/api/mobilelegend/${id}/${server}?apikey=c0163b349edd0273f5df2835`)
           nick = get_result.result
           txt = `${sayingtime} ${pushname} 
                                    
@@ -2629,8 +2771,8 @@ const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
                     hydratedTemplate: {
                         hydratedContentText: txt,
                             locationMessage: {
-                                jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg')  },
-                                    hydratedFooterText: 'Gagal Ya Banh?? 🗿\nNi Fitur Topup Masih Beta\nMau Topup? Bisa Langsung Order Ke Owner',
+                                jpegThumbnail: logo_statustopup  },
+                                    hydratedFooterText: username,
                                          hydratedButtons: [{
                                  urlButton: {
                                  displayText: 'Website Owner',
@@ -2663,470 +2805,174 @@ const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
                                     await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
                                 }
 break
+
 //SEMUA MENU
 case 'allmenu':{
-anu = `
-┌──⭓ *Anonymous Chat Menu*
-│
-│⭔ ${prefix}anonymous
-│⭔ ${prefix}start
-│⭔ ${prefix}next
-│⭔ ${prefix}keluar
-│⭔ ${prefix}sendkontak
-│
-└───────⭓
-
-┌──⭓ *Downloader Menu*
-│
-│⭔ ${prefix}tiktoknowm [url]
-│⭔ ${prefix}tiktokwm [url]
-│⭔ ${prefix}tiktokmp3 [url]
-│⭔ ${prefix}instagram [url]
-│⭔ ${prefix}ig2 [url]
-│⭔ ${prefix}igreels [url]
-│⭔ ${prefix}igtv [url]
-│⭔ ${prefix}twitter [url]
-│⭔ ${prefix}twittermp3 [url]
-│⭔ ${prefix}facebook [url]
-│⭔ ${prefix}pinterestdl [url]
-│⭔ ${prefix}ytmp3 [url]
-│⭔ ${prefix}ytmp4 [url]
-│⭔ ${prefix}getmusic [query]
-│⭔ ${prefix}getvideo [query]
-│
-└───────⭓
-
-┌──⭓ *Search Menu*
-│
-│⭔ ${prefix}play [query]
-│⭔ ${prefix}yts [query]
-│⭔ ${prefix}google [query]
-│⭔ ${prefix}gimage [query]
-│⭔ ${prefix}pinterest [query]
-│⭔ ${prefix}wallpaper [query]
-│⭔ ${prefix}wikimedia [query]
-│⭔ ${prefix}ytsearch [query]
-│
-└───────⭓
-
-┌──⭓ *Random Menu*
-│
-│⭔ ${prefix}coffe
-│⭔ ${prefix}porno
-│⭔ ${prefix}quotesanime
-│⭔ ${prefix}motivasi
-│⭔ ${prefix}dilanquote
-│⭔ ${prefix}bucinquote
-│⭔ ${prefix}katasenja
-│⭔ ${prefix}puisi
-│
-└───────⭓
-
-┌──⭓ Islam Menu
-│
-│⭔ ${prefix}ummi  <url>
-│⭔ ${prefix}kisahnabi  <nabi> [ERROR]
-│⭔ ${prefix}jadwalsholat  <daerah> [ERROR]
-│
-└───────⭓
-
-┌──⭓ *Wibu Menu*
-│
-│⭔ ${prefix}hentai
-│⭔ ${prefix}anime  <query>[ERROR]
-│⭔ ${prefix}otakudesu  <query>[ERROR]
-│
-┌⭓ *Random Anime*
-│
-│⭔ ${prefix}cry
-│⭔ ${prefix}kill
-│⭔ ${prefix}hug
-│⭔ ${prefix}pat
-│⭔ ${prefix}lick
-│⭔ ${prefix}kiss
-│⭔ ${prefix}bite
-│⭔ ${prefix}yeet
-│⭔ ${prefix}neko
-│⭔ ${prefix}bully
-│⭔ ${prefix}bonk
-│⭔ ${prefix}wink
-│⭔ ${prefix}poke
-│⭔ ${prefix}nom
-│⭔ ${prefix}slap
-│⭔ ${prefix}waifu
-│⭔ ${prefix}smile
-│⭔ ${prefix}wave
-│⭔ ${prefix}awoo
-│⭔ ${prefix}blush
-│⭔ ${prefix}smug
-│⭔ ${prefix}glomp
-│⭔ ${prefix}happy
-│⭔ ${prefix}dance
-│⭔ ${prefix}cringe
-│⭔ ${prefix}cuddle
-│⭔ ${prefix}highfive
-│⭔ ${prefix}shinobu
-│⭔ ${prefix}megumin
-│⭔ ${prefix}handhold
-│
-└───────⭓
-
-┌──⭓ *Image Menu*
-│
-│⭔ ${prefix}anime
-│⭔ ${prefix}waifu
-│⭔ ${prefix}husbu
-│⭔ ${prefix}neko
-│⭔ ${prefix}shinobu
-│⭔ ${prefix}megumin
-│
-└───────⭓
-
-┌──⭓ *Fun Menu*
-│
-│⭔ ${prefix}halah
-│⭔ ${prefix}hilih
-│⭔ ${prefix}huluh
-│⭔ ${prefix}heleh
-│⭔ ${prefix}holoh
-│⭔ ${prefix}jadian
-│⭔ ${prefix}jodohku
-│⭔ ${prefix}family100
-│⭔ ${prefix}tebak [option]
-│⭔ ${prefix}math [mode]
-│
-└───────⭓
-
-┌──⭓ *Primbon Menu*
-│
-│⭔ ${prefix}nomorhoki
-│⭔ ${prefix}artimimpi
-│⭔ ${prefix}artinama
-│⭔ ${prefix}ramaljodoh
-│⭔ ${prefix}ramaljodohbali
-│⭔ ${prefix}suamiistri
-│⭔ ${prefix}ramalcinta
-│⭔ ${prefix}cocoknama
-│⭔ ${prefix}pasangan
-│⭔ ${prefix}jadiannikah
-│⭔ ${prefix}sifatusaha
-│⭔ ${prefix}rezeki
-│⭔ ${prefix}pekerjaan
-│⭔ ${prefix}nasib
-│⭔ ${prefix}penyakit
-│⭔ ${prefix}tarot
-│⭔ ${prefix}fengshui
-│⭔ ${prefix}haribaik
-│⭔ ${prefix}harisangar
-│⭔ ${prefix}harisial
-│⭔ ${prefix}nagahari
-│⭔ ${prefix}arahrezeki
-│⭔ ${prefix}peruntungan
-│⭔ ${prefix}weton
-│⭔ ${prefix}karakter
-│⭔ ${prefix}keberuntungan
-│⭔ ${prefix}memancing
-│⭔ ${prefix}masasubur
-│⭔ ${prefix}zodiak
-│⭔ ${prefix}shio
-│
-└───────⭓
-
-┌──⭓ *Convert Menu*
-│
-│⭔ ${prefix}toimage
-│⭔ ${prefix}removebg
-│⭔ ${prefix}memegen
-│⭔ ${prefix}smeme
-│⭔ ${prefix}tovideo
-│⭔ ${prefix}emojimix
-│⭔ ${prefix}tovideo
-│⭔ ${prefix}togif
-│⭔ ${prefix}tourl
-│⭔ ${prefix}ebinary
-│⭔ ${prefix}dbinary
-│
-└───────⭓
-
-┌──⭓ *Main Menu*
-│
-│⭔ ${prefix}ping
-│⭔ ${prefix}owner
-│⭔ ${prefix}menu / ${prefix}help / ${prefix}?
-│⭔ ${prefix}delete
-│⭔ ${prefix}infochat
-│⭔ ${prefix}quoted
-│⭔ ${prefix}listpc
-│⭔ ${prefix}listgc
-│⭔ ${prefix}listonline
-│
-└───────⭓
-
-┌──⭓ *Database Menu*
-│
-│⭔ ${prefix}setcmd
-│⭔ ${prefix}listcmd
-│⭔ ${prefix}delcmd
-│⭔ ${prefix}lockcmd
-│⭔ ${prefix}addmsg
-│⭔ ${prefix}listmsg
-│⭔ ${prefix}getmsg
-│⭔ ${prefix}delmsg
-│
-└───────⭓
-
-┌──⭓ *Group Menu*
-│
-│⭔ ${prefix}linkgroup
-│⭔ ${prefix}ephemeral
-│⭔ ${prefix}setpp
-│⭔ ${prefix}afk [alasan]
-│⭔ ${prefix}setname [text]
-│⭔ ${prefix}group
-│⭔ ${prefix}editinfo
-│⭔ ${prefix}hidetag [text]
-│⭔ ${prefix}tagall [text]
-│⭔ ${prefix}add @user
-│⭔ ${prefix}kick @user
-│⭔ ${prefix}promote @user
-│⭔ ${prefix}demote @user
-│
-└───────⭓
-
-┌──⭓ *Owner Menu*
-│
-│⭔ ${prefix}chat [option]
-│⭔ ${prefix}join [link]
-│⭔ ${prefix}leave
-│⭔ ${prefix}block @user
-│⭔ ${prefix}unblock @user
-│⭔ ${prefix}bcgroup
-│⭔ ${prefix}bcall
-│
-└───────⭓
-
-┌──⭓ *Other Menu*
-│
-│⭔ ${prefix}herolist
-│⭔ ${prefix}herodetail [hero]
-│
-└───────⭓
-`
-                const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                templateMessage: {
-                    hydratedTemplate: {
-                        hydratedContentText: anu,
-                            locationMessage: {
-                                jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                    hydratedFooterText: username,
-                                         hydratedButtons: [{
-                                 urlButton: {
-                                 displayText: 'Website Owner',
-                                 url: 'https://ramadhankukuh.github.io'
-                                                    }
-                                                }, {
-                                 urlButton: {
-                                 displayText: 'YouTube Owner',
-                                 url: 'https://youtube.com/c/KukuhRamadhann'
-                                                    }
-                                                }, {
-                                quickReplyButton: {
-                                 displayText: 'TOPUP DM',
-                                id: 'topupdm'
-                                                    }
-                                                }, {
-                                 quickReplyButton: {
-                                 displayText: 'OWNER',
-                                 id: 'owner'
-                                                    }  
-                                                }, {
-                                quickReplyButton: {
-                                 displayText: 'BACK TO MENU',
-                                 id: 'menu'
-                                                    }
-                                                }]
-                                            }
-                                        }
-                                    }), { userJid: m.chat, quoted: m })
-                                    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                }
+anu = cmmnd.allMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_allmenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
 break
 
 //MENU ANONYMOUS
 case 'anonmenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-┌──⭓ Anonymous Chat Menu
-│
-│⭔ ${prefix}anonymous
-│⭔ ${prefix}start
-│⭔ ${prefix}next
-│⭔ ${prefix}keluar
-│⭔ ${prefix}sendkontak
-│
-└───────⭓`
+    anu = cmmnd.anonMenu(sayingtime, WaktuWib, pushname, prefix)
     const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_anonmenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
     
     //MENU DOWNLOADER
 case 'downloadmenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-┌──⭓ Downloader Menu
-│
-│⭔ ${prefix}tiktoknowm  <url>
-│⭔ ${prefix}tiktokwm   <url>
-│⭔ ${prefix}tiktokmp3   <url>
-│⭔ ${prefix}instagram   <url>
-│⭔ ${prefix}ig2   <url>
-│⭔ ${prefix}igreels   <url>
-│⭔ ${prefix}igtv   <url>
-│⭔ ${prefix}twitter   <url>
-│⭔ ${prefix}twittermp3   <url>
-│⭔ ${prefix}facebook   <url>
-│⭔ ${prefix}pinterestdl   <url>
-│⭔ ${prefix}ytmp3   <url>
-│⭔ ${prefix}ytmp4   <url>
-│⭔ ${prefix}getmusic <query>
-│⭔ ${prefix}getvideo <query>
-│
-└───────⭓`
+    anu = cmmnd.downloadMenu(sayingtime, WaktuWib, pushname, prefix)
     const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_downloadmenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
     //MENU ISLAM
 case 'islammenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-┌──⭓ Islam Menu
-│
-│⭔ ${prefix}ummi  <url>
-│⭔ ${prefix}kisahnabi  <nabi> [ERROR]
-│⭔ ${prefix}jadwalsholat  <daerah> [ERROR]
-│
-└───────⭓`
+    anu = cmmnd.islamMenu(sayingtime, WaktuWib, pushname, prefix)
     const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_islammenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
     //MENU SOUND
 case 'soundmenu': {
@@ -3176,672 +3022,507 @@ case 'soundmenubanh': {
     
     //MENU GROUB
 case 'grubmenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-┌──⭓ Group Menu
-│
-│⭔ ${prefix}linkgroup
-│⭔ ${prefix}ephemeral
-│⭔ ${prefix}setpp
-│⭔ ${prefix}afk  <alasan>
-│⭔ ${prefix}setname  <text>
-│⭔ ${prefix}group
-│⭔ ${prefix}editinfo
-│⭔ ${prefix}hidetag  <text>
-│⭔ ${prefix}tagall  <text>
-│⭔ ${prefix}add  62xxx
-│⭔ ${prefix}kick  @tag
-│⭔ ${prefix}promote  @tag
-│⭔ ${prefix}demote  @tag
-│
-└───────⭓`
+    anu = cmmnd.grubMenu(sayingtime, WaktuWib, pushname, prefix)
     const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_grubmenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
     
 //MENU SEARCHING
 case 'searchmenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-┌──⭓ Search Menu
-│
-│⭔ ${prefix}play  <query>
-│⭔ ${prefix}yts  <query>
-│⭔ ${prefix}google  <query>
-│⭔ ${prefix}gimage  <query>
-│⭔ ${prefix}pinterest  <query>
-│⭔ ${prefix}wallpaper  <query>
-│⭔ ${prefix}wikimedia  <query>
-│⭔ ${prefix}ytsearch  <query>
-│
-└───────⭓`
+    anu = cmmnd.searchMenu(sayingtime, WaktuWib, pushname, prefix)
     const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_searchmenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
     
     //MENU PRIMBON
     case 'primbonmenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-┌──⭓ Primbon Menu
-│
-│⭔ ${prefix}nomorhoki
-│⭔ ${prefix}artimimpi
-│⭔ ${prefix}artinama
-│⭔ ${prefix}ramaljodoh
-│⭔ ${prefix}ramaljodohbali
-│⭔ ${prefix}suamiistri
-│⭔ ${prefix}ramalcinta
-│⭔ ${prefix}cocoknama
-│⭔ ${prefix}pasangan
-│⭔ ${prefix}jadiannikah
-│⭔ ${prefix}sifatusaha
-│⭔ ${prefix}rezeki
-│⭔ ${prefix}pekerjaan
-│⭔ ${prefix}nasib
-│⭔ ${prefix}penyakit
-│⭔ ${prefix}tarot
-│⭔ ${prefix}fengshui
-│⭔ ${prefix}haribaik
-│⭔ ${prefix}harisangar
-│⭔ ${prefix}harisial
-│⭔ ${prefix}nagahari
-│⭔ ${prefix}arahrezeki
-│⭔ ${prefix}peruntungan
-│⭔ ${prefix}weton
-│⭔ ${prefix}karakter
-│⭔ ${prefix}keberuntungan
-│⭔ ${prefix}memancing
-│⭔ ${prefix}masasubur
-│⭔ ${prefix}zodiak
-│⭔ ${prefix}shio
-│
-└───────⭓`
-    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
+        anu = cmmnd.primbonMenu(sayingtime, WaktuWib, pushname, prefix)
+        const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+            templateMessage: {
+                hydratedTemplate: {
+                    hydratedContentText: anu,
+                        locationMessage: {
+                            jpegThumbnail: logo_primbonmenu },
+                            hydratedFooterText: username,
+                            hydratedButtons: [{
+        urlButton: {
+        displayText: 'Website Owner',
+        url: 'https://ramadhankukuh.github.io'
+                            }
+                        }, {
+        urlButton: {
+        displayText: 'YouTube Owner',
+        url: 'https://youtube.com/c/KukuhRamadhann'
+                            }
+                        }, {
+        quickReplyButton: {
+        displayText: 'TOPUP DM',
+        id: 'topupdm'
+                            }
+                        }, {
+        quickReplyButton: {
+        displayText: 'OWNER',
+        id: 'owner'
+                            }  
+                        }, {
+        quickReplyButton: {
+        displayText: 'BACK TO MENU',
+        id: 'menu'
+                    }
+                }]
+            }
+            }
+        }), { userJid: m.chat, quoted: m })
+        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
     break
     
 //MENU WIBU
 case 'wibumenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-┌──⭓ Wibu Menu
-│
-│⭔ ${prefix}anime [ ERROR BANH ]
-│⭔ ${prefix}waifu [ ERROR BANH ]
-│⭔ ${prefix}husbu [ ERROR BANH ]
-│⭔ ${prefix}neko [ ERROR BANH ]
-│⭔ ${prefix}shinobu
-│⭔ ${prefix}megumin
-│
-└───────⭓`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+    anu = cmmnd.wibuMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_wibumenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
 //MENU IMAGE
 case 'imagemenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+    anu = cmmnd.imageMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_imagemenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
 //MENU FUN
 case 'funmenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+    anu = cmmnd.funMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_funmenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
 //MENU CONVERT
 case 'convertmenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+    anu = cmmnd.convertMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_convertmenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
 //MENU RANDOM
 case 'randommenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+    anu = cmmnd.randomMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_randommenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
 //MENU DATABASE
 case 'databasemenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+    anu = cmmnd.databaseMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_databasemenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
 //MENU OTHER
 case 'othermenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+    anu = cmmnd.otherMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_othermenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
 //MENU OWNER
 case 'ownermenu':{
-anu = `${sayingtime} ${pushname} 
-    
-Time Server :
-⭔ ${WaktuWib}
-    
-`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-                    templateMessage: {
-                        hydratedTemplate: {
-                            hydratedContentText: anu,
-                                locationMessage: {
-                                    jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                                        hydratedFooterText: username,
-                                             hydratedButtons: [{
-                                     urlButton: {
-                                     displayText: 'Website Owner',
-                                     url: 'https://ramadhankukuh.github.io'
-                                                        }
-                                                    }, {
-                                     urlButton: {
-                                     displayText: 'YouTube Owner',
-                                     url: 'https://youtube.com/c/KukuhRamadhann'
-                                                        }
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'TOPUP DM',
-                                    id: 'topupdm'
-                                                        }
-                                                    }, {
-                                     quickReplyButton: {
-                                     displayText: 'OWNER',
-                                     id: 'owner'
-                                                        }  
-                                                    }, {
-                                    quickReplyButton: {
-                                     displayText: 'BACK TO MENU',
-                                     id: 'menu'
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        }), { userJid: m.chat, quoted: m })
-                                        await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
-                                    }
-    break
+    anu = cmmnd.ownerMenu(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_ownermenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'BACK TO MENU',
+    id: 'menu'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 
 //MENU
 case 'list': case 'menu': case 'help': case '?': {
-	m.reply(mess.waitcovid)
-    covidapi = await fetchJson(`https://apicovid19indonesia-v2.vercel.app/api/indonesia`)
-    vaksin = await fetchJson(`https://vaksincovid19-api.vercel.app/api/vaksin`)
-anu = `${sayingtime} ${pushname} 
-
-Bot Ini Aktif 24 Jam, Jika Ada BUG / BOT Tidak Merespon Bisa Hubungi Owner.
-
-Untuk Melihat Menu Tekan Tombol *LIST MENU*
-
-『 *INDO TIME* 』
-〆 ${WaktuWib} WIB
-〆 ${WaktuWita} WITA
-〆 ${WaktuWit} WIT
-
-『 *COVID INDO* 』
-〆 Positif : ${copidindo[0].kasus}
-〆 Sembuh : ${copidindo[0].sembuh}
-〆 Meninggal : ${copidindo[0].kematian}
-〆 Dirawat : ${covidapi.dirawat}
-
-『 *VAKSIN INDO* 』
-〆 Target : ${vaksin.totalsasaran}
-〆 Vaksin 1 : ${vaksin.vaksinasi1}
-〆 Vaksin 2 : ${vaksin.vaksinasi2}
-〆 Vaksin 3 : No Data
-
-『 *COVID DUNIA* 』
-〆 Positif : ${copidworld[0].kasus}
-〆 Sembuh : ${copidworld[0].sembuh}
-〆 Meninggal : ${copidworld[0].kematian}`
-const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
-templateMessage: {
-    hydratedTemplate: {
-        hydratedContentText: anu,
-            locationMessage: {
-                jpegThumbnail: fs.readFileSync('./lib/hisoka.jpg') },
-                    hydratedFooterText: username,
-                         hydratedButtons: [{
-                 urlButton: {
-                 displayText: 'Website Owner',
-                 url: 'https://ramadhankukuh.github.io'
-                                    }
-                                }, {
-                 urlButton: {
-                 displayText: 'YouTube Owner',
-                 url: 'https://youtube.com/c/KukuhRamadhann'
-                                    }
-                                }, {
-                quickReplyButton: {
-                displayText: 'TOPUP DM',
-                id: 'topupdm'
-                                                           }
-                                                       }, {
-                 quickReplyButton: {
-                 displayText: 'OWNER',
-                 id: 'owner'
-                                    }  
-                                }, {
-                quickReplyButton: {
-                 displayText: 'LIST MENU',
-                 id: 'command'
-                                    }
-                                }]
-                            }
+    anu = cmmnd.listMenu(covidapi, vaksin, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                    locationMessage: {
+                        jpegThumbnail: logo_listmenu },
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
                         }
-                    }), { userJid: m.chat, quoted: m })
-                    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'TOPUP DM',
+    id: 'topupdm'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'LIST MENU',
+    id: 'command'
                 }
-            break
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
 //END MENU
 
             default:
@@ -3913,8 +3594,8 @@ templateMessage: {
     } catch (err) {
         m.reply(util.format(err))
     }
-
 }
+
 
 let file = require.resolve(__filename)
 fs.watchFile(file, () => {
