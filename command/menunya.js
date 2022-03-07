@@ -1,23 +1,24 @@
-exports.listMenu = (covidapi, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname, prefix) => {
+exports.listMenu = (covidapi, week, weton, dateIslamic, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname) => {
     return `${sayingtime} ${pushname} 
 
-Bot Ini Aktif 24 Jam, Jika Ada BUG / BOT Tidak Merespon Bisa Hubungi Owner.
-    
-Untuk Melihat Menu Tekan Tombol *LIST MENU*
+Bot Ini Aktif 24 Jam, Jika Ada BUG / BOT Tidak Merespon Bisa Hubungi Owner. Untuk Melihat Menu Tekan Tombol *LIST MENU*
 
-    
+
+『 *TANGGAL* 』
+〆 Weton : ${week} ${weton}
+〆 Islam : ${dateIslamic}
+
 『 *INDO TIME* 』
 〆 ${WaktuWib} WIB
 〆 ${WaktuWita} WITA
 〆 ${WaktuWit} WIT
-    
+
 
 『 *COVID INDO* 』
 〆 Positif : ${copidindo[0].kasus}
 〆 Sembuh : ${copidindo[0].sembuh}
 〆 Meninggal : ${copidindo[0].kematian}
 〆 Dirawat : ${covidapi.dirawat}
-    
 
 『 *COVID DUNIA* 』
 〆 Positif : ${copidworld[0].kasus}
