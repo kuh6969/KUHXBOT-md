@@ -111,6 +111,30 @@ if(salam < "05:00:00"){
 var sayingtime = 'Selamat Malam'
 }
 
+var countDownDate = new Date("2022-04-02").getTime();
+var now = new Date().getTime();
+var total = countDownDate - now;
+const demtik = Math.floor((total / 1000) % 60);
+const memnit = Math.floor((total / 1000 / 60) % 60);
+const jamm = Math.floor((total / (1000 * 60 * 60)) % 24);
+const hamri= Math.floor(total / (1000 * 60 * 60 * 24));
+const ResCount = `${hamri} Hari ${jamm} Jam ${memnit} Menit ${demtik} Detik`
+
+let d = new Date(new Date + 3600000)
+    let locale = 'id'
+let weton = ['Pahing', 'Pon', 'Wage', 'Kliwon', 'Legi'][Math.floor(d / 84600000) % 5]
+    let week = d.toLocaleDateString(locale, { weekday: 'long' })
+    let date = d.toLocaleDateString(locale, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+    let dateIslamic = Intl.DateTimeFormat(locale + '-TN-u-ca-islamic', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(d)
+
 	
         // Group
         const groupMetadata = m.isGroup ? await hisoka.groupMetadata(m.chat).catch(e => {}) : ''
@@ -3522,14 +3546,14 @@ break
 
 //MENU
 case 'list': case 'menu': case 'help': case '?': {
-    anu = cmmnd.listMenu(covidapi, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname, prefix)
+    anu = cmmnd.listMenu(covidapi, week, weton, dateIslamic, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname)
     const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
         templateMessage: {
             hydratedTemplate: {
                 hydratedContentText: anu,
                     locationMessage: {
                         jpegThumbnail: logo_listmenu },
-                        hydratedFooterText: username,
+                        hydratedFooterText: `\n『 ROAD TO RAMADHAN 』\n ${ResCount}`,
                         hydratedButtons: [{
     urlButton: {
     displayText: 'Website Owner',
