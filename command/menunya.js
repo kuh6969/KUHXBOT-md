@@ -1,27 +1,24 @@
-exports.listMenu = (covidapi, vaksin, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname, prefix) => {
+exports.listMenu = (covidapi, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname, prefix) => {
     return `${sayingtime} ${pushname} 
 
 Bot Ini Aktif 24 Jam, Jika Ada BUG / BOT Tidak Merespon Bisa Hubungi Owner.
     
 Untuk Melihat Menu Tekan Tombol *LIST MENU*
+
     
 『 *INDO TIME* 』
 〆 ${WaktuWib} WIB
 〆 ${WaktuWita} WITA
 〆 ${WaktuWit} WIT
     
+
 『 *COVID INDO* 』
 〆 Positif : ${copidindo[0].kasus}
 〆 Sembuh : ${copidindo[0].sembuh}
 〆 Meninggal : ${copidindo[0].kematian}
 〆 Dirawat : ${covidapi.dirawat}
     
-『 *VAKSIN INDO* 』
-〆 Target : ${vaksin.totalsasaran}
-〆 Vaksin 1 : ${vaksin.vaksinasi1}
-〆 Vaksin 2 : ${vaksin.vaksinasi2}
-〆 Vaksin 3 : No Data
-    
+
 『 *COVID DUNIA* 』
 〆 Positif : ${copidworld[0].kasus}
 〆 Sembuh : ${copidworld[0].sembuh}
