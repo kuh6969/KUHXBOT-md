@@ -5,11 +5,12 @@
 */
 
 require('./config')
-const { default: hisokaConnect, useSingleFileAuthState, DisconnectReason, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode } = require("@adiwajshing/baileys")
+const { default: hisokaConnect, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@adiwajshing/baileys")
 const { state, saveState } = useSingleFileAuthState(`./${sessionName}.json`)
 const pino = require('pino')
 const fs = require('fs')
 const chalk = require('chalk')
+const path = require('path')
 const FileType = require('file-type')
 const yargs = require('yargs')
 const axios = require('axios')
@@ -29,25 +30,15 @@ users: {},
 
 const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
 
-const getVersionWaweb = () => {
-    let version
-    try {
-        let a = axios.get('https://web.whatsapp.com/check-update?version=1&platform=web')
-        version = [a.data.currentVersion.replace(/[.]/g, ', ')]
-    } catch {
-        version = [2, 2204, 13]
-    }
-    return version
-}
-
 
 async function startHisoka() {
+    let { version, isLatest } = await fetchLatestBaileysVersion()
     const hisoka = hisokaConnect({
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
         browser: ['Hisoka Multi Device','Safari','1.0.0'],
         auth: state,
-        version: getVersionWaweb() || [2, 2204, 13]
+        version
     })
 
     store.bind(hisoka.ev)
@@ -170,17 +161,43 @@ async function startHisoka() {
 	}
 	hisoka.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
     }
+    
+    hisoka.setStatus = (status) => {
+        hisoka.query({
+            tag: 'iq',
+            attrs: {
+                to: '@s.whatsapp.net',
+                type: 'set',
+                xmlns: 'status',
+            },
+            content: [{
+                tag: 'status',
+                attrs: {},
+                content: Buffer.from(status, 'utf-8')
+            }]
+        })
+        return status
+    }
+
 	
     hisoka.public = true
 
     hisoka.serializeM = (m) => smsg(hisoka, m, store)
 
     hisoka.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect } = update
+        const { connection, lastDisconnect } = update	    
         if (connection === 'close') {
-            lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut ? startHisoka() : console.log('Koneksi Terputus...')
+        let reason = lastDisconnect.error ? lastDisconnect?.error?.output.statusCode : 0;
+            if (reason === DisconnectReason.badSession) { console.log(`Bad Session File, Please Delete Session and Scan Again`); process.exit(); }
+            else if (reason === DisconnectReason.connectionClosed) { console.log("Connection closed, reconnecting...."); startHisoka(); }
+            else if (reason === DisconnectReason.connectionLost) { console.log("Connection Lost from Server, reconnecting..."); startHisoka(); }
+            else if (reason === DisconnectReason.connectionReplaced) { console.log("Connection Replaced, Another New Session Opened, Please Close Current Session First"); process.exit(); }
+            else if (reason === DisconnectReason.loggedOut) { console.log(`Device Logged Out, Please Delete Session and Scan Again.`); process.exit(); }
+            else if (reason === DisconnectReason.restartRequired) { console.log("Restart Required, Restarting..."); startHisoka(); }
+            else if (reason === DisconnectReason.timedOut) { console.log("Connection TimedOut, Reconnecting..."); startHisoka(); }
+            else { console.log(`Unknown DisconnectReason: ${reason}|${connection}`) }
         }
-        console.log('Koneksi Terhubung...', update)
+        console.log('Connected...', update)
     })
 
     hisoka.ev.on('creds.update', saveState)

@@ -5,7 +5,7 @@
 */
 
 require('./config')
-const { default: BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser } = require('@adiwajshing/baileys')
+const { BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, proto, generateWAMessageContent, generateWAMessage, prepareWAMessageMedia, areJidsSameUser, getContentType } = require('@adiwajshing/baileys')
 const fs = require('fs')
 const util = require('util')
 const chalk = require('chalk')
@@ -15,6 +15,7 @@ const { fromBuffer } = require('file-type')
 const path = require('path')
 const os = require('os')
 const moment = require('moment-timezone')
+const { JSDOM } = require('jsdom')
 const speed = require('performance-now')
 const crypto = require('crypto')
 const { herolist } = require('./lib/herolist.js')
@@ -29,20 +30,28 @@ const { bytesToSize,  UploadFileUgu, webp2mp4File, TelegraPh } = require('./lib/
 const { waMessageID } = require('@adiwajshing/baileys/lib/Store/make-in-memory-store')
 const { data } = require('cheerio/lib/api/attributes')
 
-let cmdmedia = JSON.parse(fs.readFileSync('./src/cmdmedia.json'))
-let game = JSON.parse(fs.readFileSync("./src/game.json"))
-let tebaklagu = game.tebaklagu = []
-let _family100 = game.family100 = []
-let kuismath = game.math = []
-let tebakgambar = game.tebakgambar = []
-let tebakkata = game.tebakkata = []
-let caklontong = game.lontong = []
-let caklontong_desk = game.lontong_desk = []
-let tebakkalimat = game.kalimat = []
-let tebaklirik = game.lirik = []
-let tebaktebakan = game.tebakan = []
-let tebaklogo = game.logo = []
-const vote = []
+// read database
+global.db = JSON.parse(fs.readFileSync('./src/database.json'))
+if (global.db) global.db = {
+    sticker: {},
+    database: {},
+    game: {},
+    others: {},
+    users: {},
+    ...(global.db || {})
+}
+let tebaklagu = db.game.tebaklagu = []
+let _family100 = db.game.family100 = []
+let kuismath = db.game.math = []
+let tebakgambar = db.game.tebakgambar = []
+let tebakkata = db.game.tebakkata = []
+let caklontong = db.game.lontong = []
+let caklontong_desk = db.game.lontong_desk = []
+let tebakkalimat = db.game.kalimat = []
+let tebaklirik = db.game.lirik = []
+let tebaktebakan = db.game.tebakan = []
+let tebaklogo = db.game.tebaklogo = []
+let vote = db.others.vote = []
 
 module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
     try {
@@ -77,6 +86,9 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
 
             const  { cmmnd } = require(`./command`)
             oiii = cmmnd
+
+            const { top_up } = require (`./shop`)
+            oii = top_up
             
             //Waktu
         const salam = moment().tz('Asia/Jakarta').format('HH:mm:ss')
@@ -98,6 +110,7 @@ var sayingtime = 'Selamat Pagi'
 if(salam < "05:00:00"){
 var sayingtime = 'Selamat Malam'
 }
+
 	
         // Group
         const groupMetadata = m.isGroup ? await hisoka.groupMetadata(m.chat).catch(e => {}) : ''
@@ -142,6 +155,11 @@ var sayingtime = 'Selamat Malam'
             console.log(chalk.black(chalk.bgWhite('[ PESAN ]')), chalk.black(chalk.bgGreen(new Date)), chalk.black(chalk.bgBlue(budy || m.mtype)) + '\n' + chalk.magenta('=> Dari'), chalk.green(pushname), chalk.yellow(m.sender) + '\n' + chalk.blueBright('=> Di'), chalk.green(m.isGroup ? pushname : 'Private Chat', m.chat))
         }
         
+        // write database every 1 minute
+	setInterval(() => {
+            fs.writeFileSync('./src/database.json', JSON.stringify(global.db, null, 2))
+        }, 60 * 1000)
+        
         // Function
         const sendFileFromUrl = async (from, url, caption, mek, men) => {
             let mime = '';
@@ -181,8 +199,8 @@ var sayingtime = 'Selamat Malam'
             }
 
         // Respon Cmd with media
-        if (isMedia && m.msg.fileSha256 && (m.msg.fileSha256.toString('base64') in cmdmedia)) {
-        let hash = cmdmedia[m.msg.fileSha256.toString('base64')]
+        if (isMedia && m.msg.fileSha256 && (m.msg.fileSha256.toString('base64') in global.db.sticker)) {
+        let hash = global.db.sticker[m.msg.fileSha256.toString('base64')]
         let { text, mentionedJid } = hash
         let messages = await generateWAMessage(m.chat, { text: text, mentions: mentionedJid }, {
             userJid: hisoka.user.id,
@@ -201,34 +219,19 @@ var sayingtime = 'Selamat Malam'
         }
 
 		// DATABASE AFK
-        let users = global.db.data.users[m.sender]
-        if (typeof users !== 'object') global.db.data.users[m.sender] = {}
-        if (users) {
-        if (!isNumber(users.afkTime)) users.afkTime = -1
-        if (!('afkReason' in users)) users.afkReason = ''
-        } else global.db.data.users[m.sender] = {
-        afkTime: -1,
-        afkReason: '',
-    }
-
-    for (let jid of mentionUser) {
-        let user = global.db.data.users[jid]
-        if (!user) continue
-        let afkTime = user.afkTime
-        if (!afkTime || afkTime < 0) continue
-        let reason = user.afkReason || ''
-m.reply(`Jangan tag dia!
-Dia sedang AFK ${reason ? '\nReason : ' + reason : 'Reason : Nothing'}
-Waktu : ${clockString(new Date - user.afkTime)}
-`.trim())
-}
-        if (db.data.users[m.sender].afkTime > -1) {
-        let user = global.db.data.users[m.sender]
-m.reply(`Kamu berhenti AFK${user.afkReason ? ' setelah ' + user.afkReason : ''}
-Selama ${clockString(new Date - user.afkTime)}
-`.trim())
-        user.afkTime = -1
-        user.afkReason = ''
+        try {
+            let isNumber = x => typeof x === 'number' && !isNaN(x)
+            let user = global.db.users[m.sender]
+            if (typeof user !== 'object') global.db.users[m.sender] = {}
+            if (user) {
+                if (!isNumber(user.afkTime)) user.afkTime = -1
+                if (!('afkReason' in user)) user.afkReason = ''
+            } else global.db.users[m.sender] = {
+                afkTime: -1,
+                afkReason: '',
+            }
+        } catch (err) {
+            console.error(err)
         }
 	    
 	if (('family100'+m.chat in _family100) && isCmd) {
@@ -466,7 +469,37 @@ klik https://wa.me/${botNumber.split`@`[0]}`, m, { mentions: [roof.p, roof.p2] }
 	    delete this.suit[roof.id]
 	    }
 	    }
+        let mentionUserr = [...new Set([...(m.mentionedJid || []), ...(m.quoted ? [m.quoted.sender] : [])])]
+	    for (let jid of mentionUserr) {
+            let user = global.db.users[jid]
+            if (!user) continue
+            let afkTime = user.afkTime
+            if (!afkTime || afkTime < 0) continue
+            let reason = user.afkReason || ''
+            m.reply(`
+Jangan tag dia!
+Dia sedang AFK ${reason ? 'dengan alasan ' + reason : 'tanpa alasan'}
+Selama ${clockString(new Date - afkTime)}
+`.trim())
+        }
+
+if (db.users[m.sender].afkTime > -1) {
+            let user = global.db.users[m.sender]
+            m.reply(`
+Kamu berhenti AFK${user.afkReason ? ' setelah ' + user.afkReason : ''}
+Selama ${clockString(new Date - user.afkTime)}
+`.trim())
+            user.afkTime = -1
+            user.afkReason = ''
+        }
         switch(command) {
+        	case 'afk': {
+                let user = global.db.users[m.sender]
+                user.afkTime = + new Date
+                user.afkReason = text
+                m.reply(`${m.pushName} Telah Afk${text ? ': ' + text : ''}`)
+            }
+            break	
         case 'ttc': case 'ttt': case 'tictactoe': {
             let TicTacToe = require("./lib/tictactoe")
             this.game = this.game ? this.game : {}
@@ -557,6 +590,10 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 
 	    case 'donasi': case 'sewabot': case 'sewa': case 'buypremium': case 'donate': {
                 hisoka.sendMessage(m.chat, { image: { url: 'https://telegra.ph/file/7486dc50589a45f4b3a3f.jpg' }, caption: `Hai Kak ${m.pushName}\n\n*Bot Rental Price :*\n⭔ 5k Per Group Selama 1 Bulan\n\n*Pembayaran :*\n⭔ Dana, GoPay, OVO\n⭔ ShopeePay, LinkAja, QRIS\n⭔ Pulsa XL/Axis, Telkomsel, Indosat\n⭔ Paypal : https://www.paypal.me/ramadhankukuh\n\nMau Sewa / Donasi?\n\nFor More Detail, You Can Chat With The Owner https://wa.me/12816245470 (Kukuh)` }, { quoted: m })
+            }
+            break
+            case 'payment': {
+                hisoka.sendMessage(m.chat, { image: { url: 'https://telegra.ph/file/7486dc50589a45f4b3a3f.jpg' }, caption: `Hai Kak ${m.pushName}\n\n*Pembayaran Bisa Scan Lewat QRIS Ya / PAYPAL*\n\n\n*Pembayaran Lainnya:*\n⭔Bank BRI, BCA, MANDIRI\n⭔ Dana, GoPay, OVO\n⭔ ShopeePay, LinkAja, QRIS\n⭔ Pulsa XL/Axis, Telkomsel, Indosat\n⭔ Paypal : https://www.paypal.me/ramadhankukuh\n\nFor More Detail, You Can Chat With The Owner https://wa.me/12816245470 (Kukuh)` }, { quoted: m })
             }
             break
             case 'sc': {
@@ -795,14 +832,6 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
 		await hisoka.groupParticipantsUpdate(m.chat, [users], 'demote').then((res) => m.reply(jsonformat(res))).catch((err) => m.reply(jsonformat(err)))
 	}
 	break
-    case 'afk': {
-        if (!m.isGroup) throw(mess.group)
-        let user = global.db.data.users[m.sender]
-        user.afkTime = + new Date
-        user.afkReason = text
-        m.reply(`${m.pushName} Telah Afk Dengan Alasan ${text ? ': ' + text : 'Nothing'}\n\n_Fitur AFK Masih Ada Bug Di Waktu Banh😅☝️_`)
-        }
-        break
         case 'block': {
 		if (!isCreator) throw mess.owner
 		let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '')+'@s.whatsapp.net'
@@ -852,6 +881,17 @@ Silahkan @${m.mentionedJid[0].split`@`[0]} untuk ketik terima/tolak`
                 m.reply(mess.success)
                 }
                 break
+case 'style': case 'styletext': {
+		let { styletext } = require('./lib/scraper')
+		if (!text) throw 'Masukkan Query text!'
+                let anu = await styletext(text)
+                let teks = `Srtle Text From ${text}\n\n`
+                for (let i of anu) {
+                    teks += `⭔ *${i.name}* : ${i.result}\n\n`
+                }
+                m.reply(teks)
+	    }
+	    break
             case 'vote': {
                 if (!m.isGroup) throw mess.group
                 if (m.chat in vote) throw `_Masih ada vote di chat ini!_\n\n*${prefix}hapusvote* - untuk menghapus vote`
@@ -1559,57 +1599,49 @@ ${id}`)
                 }
                 break
 	    case 'ytmp3': case 'ytaudio': {
+                let { yta } = require('./lib/y2mate')
                 if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=xxxx 128kbps`
-		let { aiovideodl } = require('./lib/scraper')
-                let result = await aiovideodl(isUrl(text)[0])
-                let { url, title, thumbnail, duration, medias } = result
-                let quality = args[1] ? args[1] : '128kbps'                
-                let media = medias.filter(v => v.videoAvailable == false && v.audioAvailable == true && v.quality == quality).map(v => v)
-                if (media[0].formattedSize.split('MB')[0] >= 100.00) return m.reply('File Melebihi Batas'+util.format(media))
-                hisoka.sendImage(m.chat, thumbnail, `⭔ Title : ${title}\n⭔ File Size : ${media[0].formattedSize}\n⭔ Url : ${url}\n⭔ Ext : MP3\n⭔ Resolusi : ${args[1] || '128kbps'}`, m)
-                hisoka.sendMessage(m.chat, { audio: { url: media[0].url }, mimetype: 'audio/mp4', fileName: `${title}.mp3` }, { quoted: m })
+                let quality = args[1] ? args[1] : '128kbps'
+                let media = await yta(text, quality)
+                if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
+                hisoka.sendImage(m.chat, media.thumb, `⭔ Title : ${media.title}\n⭔ File Size : ${media.filesizeF}\n⭔ Url : ${isUrl(text)}\n⭔ Ext : MP3\n⭔ Resolusi : ${args[1] || '128kbps'}`, m)
+                hisoka.sendMessage(m.chat, { audio: { url: media.dl_link }, mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
             }
             break
             case 'ytmp4': case 'ytvideo': {
-                if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=PtFMh6Tccag%27 360p`
-		let { aiovideodl } = require('./lib/scraper')
-                let result = await aiovideodl(isUrl(text)[0])
-                let { url, title, thumbnail, duration, medias } = result
-                let quality = args[1] ? args[1] : '360p'                
-                let media = medias.filter(v => v.videoAvailable == true && v.audioAvailable == false && v.quality == quality).map(v => v)
-                if (media[0].formattedSize.split('MB')[0] >= 100.00) return m.reply('File Melebihi Batas'+util.format(media))
-                hisoka.sendMessage(m.chat, { video: { url: media[0].url }, fileName: `${title}.mp4`, mimetype: 'video/mp4', caption: `⭔ Title : ${title}\n⭔ File Size : ${media[0].formattedSize}\n⭔ Url : ${url}\n⭔ Ext : MP4\n⭔ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
+                let { ytv } = require('./lib/y2mate')
+                if (!text) throw `Example : ${prefix + command} https://youtube.com/watch?v=xxx 360p`
+                let quality = args[1] ? args[1] : '360p'
+                let media = await ytv(text, quality)
+                if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
+                hisoka.sendMessage(m.chat, { video: { url: media.dl_link }, mimetype: 'video/mp4', fileName: `${media.title}.mp4`, caption: `⭔ Title : ${media.title}\n⭔ File Size : ${media.filesizeF}\n⭔ Url : ${isUrl(text)}\n⭔ Ext : MP3\n⭔ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
             }
             break
 	    case 'getmusic': {
+                let { yta } = require('./lib/y2mate')
                 if (!text) throw `Example : ${prefix + command} 1`
                 if (!m.quoted) return m.reply('Reply Pesan')
                 if (!m.quoted.isBaileys) throw `Hanya Bisa Membalas Pesan Dari Bot`
                 let urls = quoted.text.match(new RegExp(/(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed|shorts)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]+)/, 'gi'))
                 if (!urls) throw `Mungkin pesan yang anda reply tidak mengandung result ytsearch`
-		let { aiovideodl } = require('./lib/scraper')
-                let result = await aiovideodl(urls[text - 1])
-                let { url, title, thumbnail, duration, medias } = result
-                let quality = args[1] ? args[1] : '128kbps'                
-                let media = medias.filter(v => v.videoAvailable == false && v.audioAvailable == true && v.quality == quality).map(v => v)
-                if (media[0].formattedSize.split('MB')[0] >= 100.00) return m.reply('File Melebihi Batas'+util.format(media))
-                hisoka.sendImage(m.chat, thumbnail, `⭔ Title : ${title}\n⭔ File Size : ${media[0].formattedSize}\n⭔ Url : ${url}\n⭔ Ext : MP3\n⭔ Resolusi : ${args[1] || '128kbps'}`, m)
-                hisoka.sendMessage(m.chat, { audio: { url: media[0].url }, mimetype: 'audio/mp4', fileName: `${title}.mp3` }, { quoted: m })
+		        let quality = args[1] ? args[1] : '128kbps'
+                let media = await yta(urls[text - 1], quality)
+                if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
+                hisoka.sendImage(m.chat, media.thumb, `⭔ Title : ${media.title}\n⭔ File Size : ${media.filesizeF}\n⭔ Url : ${isUrl(text)}\n⭔ Ext : MP3\n⭔ Resolusi : ${args[1] || '128kbps'}`, m)
+                hisoka.sendMessage(m.chat, { audio: { url: media.dl_link }, mimetype: 'audio/mpeg', fileName: `${media.title}.mp3` }, { quoted: m })
             }
             break
             case 'getvideo': {
+                let { ytv } = require('./lib/y2mate')
                 if (!text) throw `Example : ${prefix + command} 1`
                 if (!m.quoted) return m.reply('Reply Pesan')
                 if (!m.quoted.isBaileys) throw `Hanya Bisa Membalas Pesan Dari Bot`
                 let urls = quoted.text.match(new RegExp(/(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed|shorts)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]+)/, 'gi'))
                 if (!urls) throw `Mungkin pesan yang anda reply tidak mengandung result ytsearch`
-		let { aiovideodl } = require('./lib/scraper')
-                let result = await aiovideodl(urls[text - 1])
-                let { url, title, thumbnail, duration, medias } = result
-                let quality = args[1] ? args[1] : '360p'                
-                let media = medias.filter(v => v.videoAvailable == true && v.audioAvailable == false && v.quality == quality).map(v => v)
-                if (media[0].formattedSize.split('MB')[0] >= 100.00) return m.reply('File Melebihi Batas'+util.format(media))
-                hisoka.sendMessage(m.chat, { video: { url: media[0].url }, fileName: `${title}.mp4`, mimetype: 'video/mp4', caption: `⭔ Title : ${title}\n⭔ File Size : ${media[0].formattedSize}\n⭔ Url : ${url}\n⭔ Ext : MP4\n⭔ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
+		        let quality = args[1] ? args[1] : '360p'
+                let media = await ytv(urls[text - 1], quality)
+                if (media.filesize >= 100000) return m.reply('File Melebihi Batas '+util.format(media))
+                hisoka.sendMessage(m.chat, { video: { url: media.dl_link }, mimetype: 'video/mp4', fileName: `${media.title}.mp4`, caption: `⭔ Title : ${media.title}\n⭔ File Size : ${media.filesizeF}\n⭔ Url : ${isUrl(text)}\n⭔ Ext : MP3\n⭔ Resolusi : ${args[1] || '360p'}` }, { quoted: m })
             }
             break
             case 'pinterest': {
@@ -2047,22 +2079,15 @@ ${id}`)
                 hisoka.sendMessage(m.chat, { audio: cnvrt, mimetype: 'audio/mpeg'}, { quoted: msg })
             }
             break
-	        case 'igdl': case 'ig': case 'instagram': {
-                if (!text) throw 'Masukkan Query Link!'
+	        case 'igdl': case 'ig': case 'instagram': case 'igtv': {
+                if (!text) throw `Masukkan Query Link!\nExample : ${prefix + command} https://www.instagram.com/urlVideo`
                 m.reply(mess.wait)
                 if (/(?:\/p\/|\/reel\/|\/tv\/)([^\s&]+)/.test(isUrl(text)[0])) {
                 let { igdl } = require ('./lib/gif')
                 let result = await igdl((`${text}`))
-                hisoka.sendMessage(m.chat, { video: { url: result.result.link }, caption: `Deskripsi ${result.result.desc}` }, { quoted: m})
-            } 
+                hisoka.sendMedia(m.chat, result.result.link, '', `Download Url Instagram From ${isUrl(text)[0]}`, m)
+                }
           }
-            break
-            case 'igdltv': case 'igreels': case 'igdl2': {
-                if (!text) throw 'Masukkan Query Link!'
-                m.reply(mess.wait)
-                let anu = await fetchJson(api('zenz', '/api/downloader/instagram', { url: text }, 'apikey'))
-                hisoka.sendMessage(m.chat, { video: { url: anu.result.link }, caption: `⭔ Desc : ${anu.result.caption.desc}`}, { quoted: m })
-            }
             break
 	        case 'twitdl': case 'twitter': {
                 if (!text) throw 'Masukkan Query Link!'
@@ -2118,24 +2143,22 @@ ${id}`)
                 if (!m.quoted.fileSha256) throw 'SHA256 Hash Missing'
                 if (!text) throw `Untuk Command Apa?`
                 let hash = m.quoted.fileSha256.toString('base64')
-                if (cmdmedia[hash] && cmdmedia[hash].locked) throw 'You have no permission to change this sticker command'
-                cmdmedia[hash] = {
+                if (global.db.sticker[hash] && global.db.sticker[hash].locked) throw 'You have no permission to change this sticker command'
+                global.db.sticker[hash] = {
                     text,
                     mentionedJid: m.mentionedJid,
                     creator: m.sender,
                     at: + new Date,
                     locked: false,
                 }
-                fs.writeFileSync('./src/cmdmedia.json', JSON.stringify(cmdmedia))
                 m.reply(`Done!`)
             }
             break
             case 'delcmd': {
                 let hash = m.quoted.fileSha256.toString('base64')
                 if (!hash) throw `Tidak ada hash`
-                if (cmdmedia[hash] && cmdmedia[hash].locked) throw 'You have no permission to delete this sticker command'              
-                delete cmdmedia[hash]
-                fs.writeFileSync('./src/cmdmedia.json', JSON.stringify(cmdmedia))
+                if (global.db.sticker[hash] && global.db.sticker[hash].locked) throw 'You have no permission to delete this sticker command'              
+                delete global.db.sticker[hash]
                 m.reply(`Done!`)
             }
             break
@@ -2143,9 +2166,9 @@ ${id}`)
                 let teks = `
 *List Hash*
 Info: *bold* hash is Locked
-${Object.entries(cmdmedia).map(([key, value], index) => `${index + 1}. ${value.locked ? `*${key}*` : key} : ${value.text}`).join('\n')}
+${Object.entries(global.db.sticker).map(([key, value], index) => `${index + 1}. ${value.locked ? `*${key}*` : key} : ${value.text}`).join('\n')}
 `.trim()
-                hisoka.sendText(m.chat, teks, m, { mentions: Object.values(cmdmedia).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
+                hisoka.sendText(m.chat, teks, m, { mentions: Object.values(global.db.sticker).map(x => x.mentionedJid).reduce((a,b) => [...a, ...b], []) })
             }
             break
             case 'lockcmd': {
@@ -2153,19 +2176,17 @@ ${Object.entries(cmdmedia).map(([key, value], index) => `${index + 1}. ${value.l
                 if (!m.quoted) throw 'Reply Pesan!'
                 if (!m.quoted.fileSha256) throw 'SHA256 Hash Missing'
                 let hash = m.quoted.fileSha256.toString('base64')
-                if (!(hash in cmdmedia)) throw 'Hash not found in database'
-                cmdmedia[hash].locked = !/^un/i.test(command)
-                fs.writeFileSync('./src/cmdmedia.json', JSON.stringify(cmdmedia))
+                if (!(hash in global.db.sticker)) throw 'Hash not found in database'
+                global.db.sticker[hash].locked = !/^un/i.test(command)
                 m.reply('Done!')
             }
             break
             case 'addmsg': {
                 if (!m.quoted) throw 'Reply Message Yang Ingin Disave Di Database'
                 if (!text) throw `Example : ${prefix + command} nama file`
-                let msgs = JSON.parse(fs.readFileSync('./src/database.json'))
+                let msgs = global.db.database
                 if (text.toLowerCase() in msgs) throw `'${text}' telah terdaftar di list pesan`
                 msgs[text.toLowerCase()] = quoted.fakeObj
-                fs.writeFileSync('./src/database.json', JSON.stringify(msgs))
 m.reply(`Berhasil menambahkan pesan di list pesan sebagai '${text}'
     
 Akses dengan ${prefix}getmsg ${text}
@@ -2174,26 +2195,25 @@ Lihat list Pesan Dengan ${prefix}listmsg`)
             break
             case 'getmsg': {
                 if (!text) throw `Example : ${prefix + command} file name\n\nLihat list pesan dengan ${prefix}listmsg`
-                let msgs = JSON.parse(fs.readFileSync('./src/database.json'))
+                let msgs = global.db.database
                 if (!(text.toLowerCase() in msgs)) throw `'${text}' tidak terdaftar di list pesan`
                 hisoka.copyNForward(m.chat, msgs[text.toLowerCase()], true)
             }
             break
             case 'listmsg': {
                 let msgs = JSON.parse(fs.readFileSync('./src/database.json'))
-	        let seplit = Object.entries(msgs).map(([nama, isi]) => { return { nama, ...isi } })
+	        let seplit = Object.entries(global.db.database).map(([nama, isi]) => { return { nama, ...isi } })
 		let teks = '「 LIST DATABASE 」\n\n'
 		for (let i of seplit) {
-		    teks += `⬡ *Name :* ${i.nama}\n⬡ *Type :* ${Object.keys(i.message)[0]}\n────────────────────────\n\n`
+		    teks += `⬡ *Name :* ${i.nama}\n⬡ *Type :* ${getContentType(i.message).replace(/Message/i, '')}\n────────────────────────\n\n`
 	        }
 	        m.reply(teks)
 	    }
 	    break
             case 'delmsg': case 'deletemsg': {
-	        let msgs = JSON.parse(fs.readFileSync('./src/database.json'))
+	        let msgs = global.db.database
 	        if (!(text.toLowerCase() in msgs)) return m.reply(`'${text}' tidak terdaftar didalam list pesan`)
 		delete msgs[text.toLowerCase()]
-                fs.writeFileSync('./src/database.json', JSON.stringify(msgs))
 		m.reply(`Berhasil menghapus '${text}' dari list pesan`)
             }
 	    break
@@ -2550,13 +2570,19 @@ case 'topupdm': {
                        {
                         title: "Kategori",
                         rows: [
-                            {title: "Mobile Legends", rowId: "listdmml", description: "Menampilkan List Topup Mobile Legends"}
+                            {title: "Mobile Legends Paket A", rowId: "listdmmla", description: "Menampilkan List Topup Mobile Legends Paket A"}
                         ]
                         },
+                        {
+                        title: "Kategori",
+                        rows: [
+                            {title: "Mobile Legends Paket B", rowId: "listdmmlb", description: "Menampilkan List Topup Mobile Legends Paket B"}
+                            ]
+                            },
                        {
                         title: "Kategori",
                         rows: [
-                            {title: "Mobile Legends Pre Order", rowId: "listdmmlpo", description: "Menampilkan List Topup Mobile Legends Pre Order (Stok Terbatas)"}
+                            {title: "Mobile Legends Pre Order [ CLOSED ]", rowId: "listdmmlpo", description: "Menampilkan List Topup Mobile Legends Pre Order (Stok Terbatas)"}
                         ]
                         },
                     ]
@@ -2573,117 +2599,129 @@ case 'topupdm': {
                 }
                     break
 
-//LIST FREE FIRE
-case 'listdmff': {
-                    let sections = [
-                        {
-                        title: "Free Fire",
-                        rows: [
-                            {title: `70 Diamonds`, rowId: "topupff", description: `IDR 9.500`}
-                        ]
-                        },
-                       {
-                        title: "Free Fire",
-                        rows: [
-                            {title: `100 Diamonds`, rowId: "topupff", description: `IDR 14.000`}
-                        ]
-                        },
-                       {
-                        title: "Free Fire",
-                        rows: [
-                            {title: "140 Diamonds", rowId: "topupff", description: "IDR 18.500"}
-                        ]
-                        },
-                       {
-                        title: "Free Fire",
-                        rows: [
-                            {title: "210 Diamonds", rowId: "topupff", description: "IDR 28.500"}
-                        ]
-                        },
-                       {
-                        title: "Free Fire",
-                        rows: [
-                            {title: "280 Diamonds", rowId: "topupff", description: "IDR 37.000"}
-                        ]
-                        },
-                       {
-                        title: "Free Fire",
-                        rows: [
-                            {title: "355 Diamonds", rowId: "topupff", description: "IDR 47.000"}
-                        ]
-                        },
-                    ]
-                    
-                    let listMessage = {
-                      text: "Pilih Nominal Diamond Disini",
-                      footer: "Kuh",
-                      title: `${sayingtime} ${pushname}`,
-                      buttonText: "CLICK HERE",
-                      sections
-                    }
-                    
-                    hisoka.sendMessage(m.chat, listMessage, { quoted: m })
-                }
-                    break
 
-//LIST MOBILE LEGENDS
-case 'listdmml': {
-                    let sections = [
-                        {
-                        title: "Mobile Legends - 1",
-                        rows: [
-                            {title: "39 Diamonds", rowId: "topupml", description: "IDR 11.000"}
-                        ]
-                        },
-                       {
-                        title: "Mobile Legends - 2",
-                        rows: [
-                            {title: "65 Diamonds", rowId: "topupml", description: "IDR 16.000"}
-                        ]
-                        },
-                       {
-                        title: "Mobile Legends - 3",
-                        rows: [
-                            {title: "92 Diamonds", rowId: "topupml", description: "IDR 22.000"}
-                        ]
-                        },
-                       {
-                        title: "Mobile Legends - 4",
-                        rows: [
-                            {title: "133 Diamonds", rowId: "topupml", description: "IDR 32.000"}
-                        ]
-                        },
-                       {
-                        title: "Mobile Legends - 5",
-                        rows: [
-                            {title: "184 Diamonds", rowId: "topupml", description: "IDR 42.000"}
-                        ]
-                        },
-                       {
-                        title: "Mobile Legends - 6",
-                        rows: [
-                            {title: "225 Diamonds", rowId: "topupml", description: "IDR 52.000"}
-                        ]
-                        },
-                      {
-                        title: "Mobile Legends - 7",
-                        rows: [
-                            {title: "266 Diamonds", rowId: "topupml", description: "IDR 62.000"}
-                        ]
-                        },
-                    ]
-                    
-                    let listMessage = {
-                      text: "Pilih Nominal Diamond Disini",
-                      footer: "Kuh",
-                      title: `${sayingtime} ${pushname}`,
-                      buttonText: "CLICK HERE",
-                      sections
-                    }
-                    
-                    hisoka.sendMessage(m.chat, listMessage, { quoted: m })
+//LIST FREE FIRE
+case 'listdmff':{
+    anu = top_up.listFF(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                        hydratedFooterText: username,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'MENU',
+    id: 'menu'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'PEMBAYARAN',
+    id: 'payment'
                 }
-                    break
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
+
+//LIST MOBILE LEGENDS A
+case 'listdmmla': {
+    anu = top_up.listmlA(sayingtime, WaktuWib, pushname, prefix)
+    anuInfo = top_up.infomlA(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                        hydratedFooterText: anuInfo,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'MENU',
+    id: 'menu'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'PEMBAYARAN',
+    id: 'bonusmla'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
+
+//LIST MOBILE LEGENDS B
+case 'listdmmlb': {
+    anu = top_up.listmlB(sayingtime, WaktuWib, pushname, prefix)
+    anuInfo = top_up.infomlB(sayingtime, WaktuWib, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                        hydratedFooterText: anuInfo,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'MENU',
+    id: 'menu'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'PEMBAYARAN',
+    id: 'bonusmlb'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
+
 
 //FORMAT ORDER FREE FIRE
 case 'topupff':{
@@ -3484,7 +3522,7 @@ break
 
 //MENU
 case 'list': case 'menu': case 'help': case '?': {
-    anu = cmmnd.listMenu(covidapi, vaksin, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname, prefix)
+    anu = cmmnd.listMenu(covidapi, copidindo, copidworld, WaktuWib, WaktuWita, WaktuWit, sayingtime, pushname, prefix)
     const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
         templateMessage: {
             hydratedTemplate: {
@@ -3584,7 +3622,7 @@ break
 		if (isCmd && budy.toLowerCase() != undefined) {
 		    if (m.chat.endsWith('broadcast')) return
 		    if (m.isBaileys) return
-		    let msgs = JSON.parse(fs.readFileSync('./src/database.json'))
+		    let msgs = global.db.database
 		    if (!(budy.toLowerCase() in msgs)) return
 		    hisoka.copyNForward(m.chat, msgs[budy.toLowerCase()], true)
 		}
