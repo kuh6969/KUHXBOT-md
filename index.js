@@ -30,7 +30,6 @@ users: {},
 
 const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
 
-
 async function startHisoka() {
     let { version, isLatest } = await fetchLatestBaileysVersion()
     const hisoka = hisokaConnect({
@@ -63,60 +62,33 @@ async function startHisoka() {
         console.log(anu)
         try {
             let metadata = await hisoka.groupMetadata(anu.id)
+            member = metadata.participants.length
             let participants = anu.participants
             for (let num of participants) {
                 // Get Profile Picture User
                 try {
-                    ppuser = await hisoka.profilePictureUrl(num, 'image')
+                    ppuser = await hisoka.getProfilePicture(num)
                 } catch {
                     ppuser = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
                 }
 
                 // Get Profile Picture Group
                 try {
-                    ppgroup = await hisoka.profilePictureUrl(anu.id, 'image')
+                    ppgroup = await hisoka.getProfilePicture(anu.id, 'image')
                 } catch {
                     ppgroup = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
                 }
 
                 if (anu.action == 'add') {
-                    const templateButtons = [
-                        {index: 1, urlButton: {displayText: 'Website', url: 'https://ramadhankukuh.github.io'}},
-                        {index: 2, urlButton: {displayText: 'YouTube', url: 'https://youtube.com/c/KukuhRamadhann'}},
-                        {index: 3, quickReplyButton: {displayText: 'WELCOME ☭', id: '.menu'}},
-                      ]
-                      
-                      const buttonMessage = {
-                          text: `Welcome To ${metadata.subject} @${num.split("@")[0]}`,
-                          footer: '@ramadhankukuh',
-                          templateButtons: templateButtons,
-                          image: {url: ppuser}
-                      }
-                      
-                      hisoka.sendMessage(anu.id, buttonMessage)
-                  
-                  } else if (anu.action == 'remove') {
-                    const templateButtons = [
-                        {index: 1, urlButton: {displayText: 'Website', url: 'https://ramadhankukuh.github.io'}},
-                        {index: 2, urlButton: {displayText: 'YouTube', url: 'https://youtube.com/c/KukuhRamadhann'}},
-                        {index: 3, quickReplyButton: {displayText: 'NITIP GORENGAN BANH ☭', id: '.menu'}},
-                      ]
-                      
-                      const buttonMessage = {
-                          text: `Kok Keluar, Mental Aman?\n@${num.split("@")[0]} Leaving To ${metadata.subject}`,
-                          footer: '@ramadhankukuh',
-                          templateButtons: templateButtons,
-                          image: {url: ppuser}
-                      }
-                      
-                      hisoka.sendMessage(anu.id, buttonMessage)
-                  }
+                    hisoka.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Hai @${num.split("@")[0]} Selamat Datang Di *${metadata.subject}*\n\nMember Ke : ${member}` })
+                } else if (anu.action == 'remove') {
+                    hisoka.sendMessage(anu.id, { image: { url: ppuser }, contextInfo: { mentionedJid: [num] }, caption: `Kok Keluar? Mental Aman? @${num.split("@")[0]} Keluar Dari *${metadata.subject}*\n\nMember Ke : ${member}` })
+                }
                   }
                   } catch (err) {
                   console.log(err)
                   }
                   })
-
     // Setting
     hisoka.decodeJid = (jid) => {
         if (!jid) return jid

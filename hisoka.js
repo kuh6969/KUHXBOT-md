@@ -89,6 +89,9 @@ module.exports = hisoka = async (hisoka, m, chatUpdate, store) => {
 
             const { top_up } = require (`./shop`)
             oii = top_up
+
+            const { po_dm } = require (`./shop`)
+            oii = po_dm
             
             //Waktu
         const salam = moment().tz('Asia/Jakarta').format('HH:mm:ss')
@@ -2738,6 +2741,86 @@ case 'listdmmlb': {
     quickReplyButton: {
     displayText: 'PEMBAYARAN',
     id: 'bonusmlb'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
+
+//LIST MOBILE LEGENDS PO
+case 'podmml': {
+    anu = po_dm.listmlPO(sayingtime, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                hydratedFooterText: `\n『 ROAD TO RAMADHAN 』\n${ResCount}\n\n〆 Time : ${WaktuWib}\n〆 Weton : ${week} ${weton}\n〆 Islam : ${dateIslamic}`,
+                hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'MENU',
+    id: 'menu'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'PEMBAYARAN',
+    id: 'payment'
+                }
+            }]
+        }
+        }
+    }), { userJid: m.chat, quoted: m })
+    await hisoka.relayMessage(m.chat, template.message, { messageId: template.key.id })}
+break
+
+//FLASH SALE MOBILE LEGENDS
+case 'flashsaleml': {
+    anu = po_dm.flashsaleMl(WaktuWib, week, dateIslamic, weton, ResCount, sayingtime, pushname, prefix)
+    const template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+        templateMessage: {
+            hydratedTemplate: {
+                hydratedContentText: anu,
+                        hydratedFooterText: `\n『 ROAD TO RAMADHAN 』\n${ResCount}\n\n〆 Time : ${WaktuWib}\n〆 Weton : ${week} ${weton}\n〆 Islam : ${dateIslamic}`,
+                        hydratedButtons: [{
+    urlButton: {
+    displayText: 'Website Owner',
+    url: 'https://ramadhankukuh.github.io'
+                        }
+                    }, {
+    urlButton: {
+    displayText: 'YouTube Owner',
+    url: 'https://youtube.com/c/KukuhRamadhann'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'MENU',
+    id: 'menu'
+                        }
+                    }, {
+    quickReplyButton: {
+    displayText: 'OWNER',
+    id: 'owner'
+                        }  
+                    }, {
+    quickReplyButton: {
+    displayText: 'PEMBAYARAN',
+    id: 'bonusmla'
                 }
             }]
         }
